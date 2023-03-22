@@ -69,7 +69,8 @@ public class FileSearch {
         List<String > compareList = countMap.keySet().stream().filter(key -> countMap.get(key) > 1).distinct().collect(Collectors.toList());
         for (int i = 0; i < compareList.size(); i++) {
             for (int j = 0; j < fileListPath.size(); j++) {
-                if(fileListPath.get(j).contains(compareList.get(i))){
+                String path=fileListPath.get(j).split("tar")[1];
+                if(path.substring(1).equals(compareList.get(i))){
                     String name=getTarName(fileListPath.get(j));
                     System.out.println("冲突文件："+compareList.get(i)+"，所在文件的位置："+fileListPath.get(j)+"，涉及到的补丁编号："+name+",登记人为："+excelMap.get(name));
                 }
