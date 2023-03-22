@@ -31,9 +31,27 @@ public class FileSearch {
     public static String[] illegalFile=new String[]{"serialConsole.log.2023-03-15.3"};
 
     public static void main(String[] args) throws Exception {
+        System.out.println("=====================================发版补丁检查开始============================");
+        String[] files = new File(url).list();
+        String excelUrl=getExcelName(files);
+        Map<String,String> excelMap=getExcelMap(url+"\\"+excelUrl);
+        for (int i = 0; i < files.length; i++) {
+            File file=new File(url+"\\"+files[i]);
+            if(!file.isFile()){
+                System.out.println("=====================================开始检查文件"+files[i]+"============================");
+                checkFile(excelMap,files[i]);
+            }
+        }
+        System.out.println("=====================================发版补丁检查结束============================");
+    }
+
+    /**
+     * 按照根目录文件单个循环判断
+     */
+    public static void checkFile(Map<String,String> excelMap,String files) throws Exception {
         List<Map<String, String>> fileNames = new ArrayList<>();
         //每个压缩包的文件
-        fileNames = FileSearch.findFileList(new File(url), fileNames);
+        fileNames = FileSearch.findFileList(new File(url+"\\"+files), fileNames);
         //压缩包中的路径
         List<String> fileList = new ArrayList<>();
         //全路径
@@ -45,12 +63,10 @@ public class FileSearch {
                 fileList.add(map.get(path));
             }
         }
-        String[] files = new File(url).list();
-        String excelUrl=getExcelName(files);
-        Map<String,String> excelMap=getExcelMap(url+"\\"+excelUrl);
+
+
         Map<String , Long> countMap = fileList.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
         List<String > compareList = countMap.keySet().stream().filter(key -> countMap.get(key) > 1).distinct().collect(Collectors.toList());
-        System.out.println("=======================================冲突文件===================================");
         for (int i = 0; i < compareList.size(); i++) {
             for (int j = 0; j < fileListPath.size(); j++) {
                 if(fileListPath.get(j).contains(compareList.get(i))){
@@ -59,7 +75,6 @@ public class FileSearch {
                 }
             }
         }
-        System.out.println("=======================================非法文件================================");
         for (int i = 0; i <illegalFile.length ; i++) {
             for (int j = 0; j < fileListPath.size(); j++) {
                 if(fileListPath.get(j).contains(illegalFile[i])){
@@ -67,7 +82,6 @@ public class FileSearch {
                 }
             }
         }
-        System.out.println("=====================================发版补丁检查结束============================");
     }
 
     /**
@@ -126,7 +140,7 @@ public class FileSearch {
         String excelName="";
         for(String url:path){
             if(url.contains(excelSuffix)){
-              excelName=url;
+                excelName=url;
             }
         }
         if(ObjectUtils.isEmpty(excelName)){
