@@ -2,7 +2,9 @@ package com.example.demo.checkFb;
 
 
 
+import com.example.demo.util.Application;
 import com.example.demo.util.ExcelUtils;
+import com.example.demo.util.sort;
 import org.codehaus.plexus.archiver.tar.TarEntry;
 import org.codehaus.plexus.archiver.tar.TarInputStream;
 import org.springframework.util.ObjectUtils;
@@ -26,9 +28,26 @@ import java.util.stream.Collectors;
  * @date: 2023/3/22
  */
 public class FileSearch {
-    public static String url = "D:\\logs\\shiro";
-    public static String excelSuffix="XLSX";
-    public static String[] illegalFile=new String[]{"serialConsole.log.2023-03-15.3"};
+    public static String url;
+    public static String excelSuffix;
+    public static String tarType;
+    public static String[] illegalFile;
+    public static String[] checkFiles;
+
+    static {
+        try {
+            url=Application.getProperty("fb_url");
+            tarType = Application.getProperty("tarType");
+            excelSuffix=Application.getProperty("excelSuffix");
+            String illegal=Application.getProperty("illegalFile");
+            illegalFile=illegal.split(";");
+            String checkFile=Application.getProperty("check_File");
+            checkFiles=checkFile.split(";");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     public static void main(String[] args) throws Exception {
         System.out.println("=====================================发版补丁检查开始============================");
@@ -40,6 +59,11 @@ public class FileSearch {
             if(!file.isFile()){
                 System.out.println("=====================================开始检查文件"+files[i]+"============================");
                 checkFile(excelMap,files[i]);
+                for (int j = 0; j < checkFiles.length; j++) {
+                    if(files[i].equals(checkFiles[j])){
+                        sort.findpath(url+"\\"+files[i]+"\\");
+                    }
+                }
             }
         }
         System.out.println("=====================================发版补丁检查结束============================");
@@ -69,13 +93,16 @@ public class FileSearch {
         List<String > compareList = countMap.keySet().stream().filter(key -> countMap.get(key) > 1).distinct().collect(Collectors.toList());
         for (int i = 0; i < compareList.size(); i++) {
             for (int j = 0; j < fileListPath.size(); j++) {
-                String path=fileListPath.get(j).split("tar")[1];
+                String path=fileListPath.get(j).split(tarType)[1];
                 if(path.substring(1).equals(compareList.get(i))){
                     String name=getTarName(fileListPath.get(j));
+                    name=name.substring(0,name.indexOf("_"));
                     System.out.println("冲突文件："+compareList.get(i)+"，所在文件的位置："+fileListPath.get(j)+"，涉及到的补丁编号："+name+",登记人为："+excelMap.get(name));
                 }
             }
         }
+        String illegal= Application.getProperty("illegalFile");
+        String[] illegalFile=illegal.split(";");
         for (int i = 0; i <illegalFile.length ; i++) {
             for (int j = 0; j < fileListPath.size(); j++) {
                 if(fileListPath.get(j).contains(illegalFile[i])){
@@ -89,7 +116,8 @@ public class FileSearch {
      * 遍历整个文件夹，得到返回值
      */
     public static List<Map<String, String>> findFileList(File dir, List<Map<String, String>> fileList) throws Exception {
-        String[] files = dir.list();// 读取目录下的所有目录文件信息
+        // 读取目录下的所有目录文件信息
+        String[] files = dir.list();
         for (int i = 0; i < files.length; i++) {
             File file = new File(dir, files[i]);
             if (file.isFile()) {
@@ -97,7 +125,8 @@ public class FileSearch {
                     fileList.add(getZipFilePath(dir + "\\" + file.getName()));
                 }
             } else {
-                findFileList(file, fileList);// 回调自身继续查询
+                // 回调自身继续查询
+                findFileList(file, fileList);
             }
         }
         return fileList;
@@ -112,13 +141,25 @@ public class FileSearch {
         TarInputStream tarInputStream = new TarInputStream(new BufferedInputStream(inputStream));
         TarEntry ze;
         while ((ze = tarInputStream.getNextEntry()) != null) {
-            map.put(path + "\\" + ze.getName(), ze.getName());
+            if(checkIsFile(path + "\\" + ze.getName().replace("/","\\"))){
+                map.put(path + "\\" + ze.getName().replace("/","\\"), ze.getName().replace("/","\\"));
+            }
         }
         tarInputStream.close();
         inputStream.close();
         return map;
     }
 
+    /**
+     * 判断压缩包内的目录是否为文件
+     */
+    public static Boolean checkIsFile(String tarPath){
+        String[] path=tarPath.split("\\\\");
+        if(path[path.length-1].contains(".")){
+            return true;
+        }
+        return false;
+    }
     /**
      * 遍历excel,获取map
      */
