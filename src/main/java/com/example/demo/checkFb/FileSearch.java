@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
  * @className: FileSearch
  * @author: LongY
  * @date: 2023/3/22
+ * 检查发版文件下的所有文件，检查依赖以及非法文件
  */
 public class FileSearch {
     public static String url;
