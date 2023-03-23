@@ -169,7 +169,7 @@ public class FileSearch {
         FileInputStream inputStream = new FileInputStream(fileName);
         List<List<Object>> list = ExcelUtils.getListByExcel(inputStream, fileName);
         Map<String,String > map=new HashMap<>();
-        for (int i = 1; i < list.size()-1; i++) {
+        for (int i = 1; i < list.size(); i++) {
             ArrayList arrayList = (ArrayList) list.get(i);
             map.put(arrayList.get(2).toString(),arrayList.get(9).toString());
         }
