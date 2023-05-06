@@ -13,6 +13,8 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -101,10 +103,29 @@ public class FileSearch {
         String[] array=url.split("\\\\");
         String newUrl=String.join("\\\\", Arrays.copyOf(array, array.length - 1));
         //删除文件夹，重新解压
-        boolean flag=new File(url).delete();
+        deleteFileList(new File(url));
         UnzipUtility.unzip(url+".zip",newUrl);
     }
 
+    public static void deleteFileList(File dir) throws Exception {
+        if (!dir.exists() || !dir.isDirectory()) {// 判断是否存在目录
+            return;
+        }
+        String[] files = dir.list();// 读取目录下的所有目录文件信息
+        for (int i = 0; i < Objects.requireNonNull(files).length; i++) {// 循环，添加文件名或回调自身
+            File file = new File(dir, files[i]);
+            BasicFileAttributes basicFileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
+            if (basicFileAttributes.isRegularFile()) {// 如果文件
+                long size= basicFileAttributes.size() /(1024*1024);
+                boolean result=file.delete();
+                if (result) {
+                    System.out.println(file.getName()+"文件大小："+size+"M---"+"删除成功");
+                }
+            } else {// 如果是目录
+                deleteFileList(file);// 回调自身继续删除
+            }
+        }
+    }
     /**
      * 按照根目录文件单个循环判断
      */
