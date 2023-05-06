@@ -53,7 +53,7 @@ public class FileSearch {
         System.out.println("=====================================发版补丁检查开始============================");
         System.out.println("当前文件路径："+url);
         //判断是否已经解压
-        if(new File(url).isDirectory()){
+        if(new File(url).exists()){
             System.out.println("当前压缩包已经解压，请确认是否使用已解压文件夹或者重新解压\n"+"1-使用，2-重新解压");
             Scanner scanner=new Scanner(System.in);
             String input = scanner.nextLine();
@@ -62,6 +62,7 @@ public class FileSearch {
                startCheck();
             }else if("2".equals(input)){
                 unZip();
+                startCheck();
             }else {
                 //提示输入错误
                 throw new Exception("请选择正确的方式！");
@@ -101,9 +102,7 @@ public class FileSearch {
         String newUrl=String.join("\\\\", Arrays.copyOf(array, array.length - 1));
         //删除文件夹，重新解压
         boolean flag=new File(url).delete();
-        if(flag){
-            UnzipUtility.unzip(url+".zip",newUrl);
-        }
+        UnzipUtility.unzip(url+".zip",newUrl);
     }
 
     /**
