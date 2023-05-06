@@ -59,12 +59,7 @@ public class sort {
             file.delete();
         }
         try {
-            if (file.createNewFile()) {
-                System.out.println("" + destationFile + "");
-
-            } else {
-                System.out.println("" + destationFile + "");
-            }
+            boolean flag=file.createNewFile();
             File file2 = new File(filepath);
             File[] temp = file2.listFiles();
 
@@ -74,8 +69,6 @@ public class sort {
             for (File afile : temp) {
                 String a = afile.getName();
                 if (afile.getName().endsWith(".tar")) {
-                    System.out.println(afile.length());
-
                     if (afile.length() < 1) {
                         throw new IOException(afile.getName() + "?????????");
                     }
@@ -93,7 +86,6 @@ public class sort {
             }
             fw.flush();
             fw.close();
-            System.out.println("success");
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("???" + destationFile + "???" + e.getMessage());

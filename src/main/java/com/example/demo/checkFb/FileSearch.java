@@ -13,10 +13,7 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -35,6 +32,8 @@ public class FileSearch {
     public static String[] illegalFile;
     public static String[] checkFiles;
 
+    public static String   checkFile;
+
     static {
         try {
             url=Application.getProperty("fb_url");
@@ -42,7 +41,7 @@ public class FileSearch {
             excelSuffix=Application.getProperty("excelSuffix");
             String illegal=Application.getProperty("illegalFile");
             illegalFile=illegal.split(";");
-            String checkFile=Application.getProperty("check_File");
+            checkFile=Application.getProperty("check_File");
             checkFiles=checkFile.split(";");
         } catch (Exception e) {
             e.printStackTrace();
@@ -52,8 +51,32 @@ public class FileSearch {
 
     public static void main(String[] args) throws Exception {
         System.out.println("=====================================发版补丁检查开始============================");
+        System.out.println("当前文件路径："+url);
+        //判断是否已经解压
+        if(new File(url).isDirectory()){
+            System.out.println("当前压缩包已经解压，请确认是否使用已解压文件夹或者重新解压\n"+"1-使用，2-重新解压");
+            Scanner scanner=new Scanner(System.in);
+            String input = scanner.nextLine();
+            if("1".equals(input)){
+                //直接使用
+               startCheck();
+            }else if("2".equals(input)){
+                unZip();
+            }else {
+                //提示输入错误
+                throw new Exception("请选择正确的方式！");
+            }
+        }else {
+            unZip();
+            startCheck();
+        }
+        System.out.println("=====================================发版补丁检查结束============================");
+    }
+
+    public static void startCheck() throws Exception {
         String[] files = new File(url).list();
         String excelUrl=getExcelName(files);
+        files= Arrays.stream(files).filter((str) -> checkFile.contains(str)).collect(Collectors.toList()).toArray(new String[0]);
         Map<String,String> excelMap=getExcelMap(url+"\\"+excelUrl);
         for (int i = 0; i < files.length; i++) {
             File file=new File(url+"\\"+files[i]);
@@ -61,13 +84,26 @@ public class FileSearch {
                 System.out.println("=====================================开始检查文件"+files[i]+"============================");
                 checkFile(excelMap,files[i]);
                 for (int j = 0; j < checkFiles.length; j++) {
-                    if(files[i].equals(checkFiles[j])){
+                    if(files[i].equals(checkFiles[j])&&!"调度".equals(files[i])){
                         sort.findpath(url+"\\"+files[i]+"\\");
                     }
                 }
             }
         }
-        System.out.println("=====================================发版补丁检查结束============================");
+    }
+
+    /**
+     * 解压zip压缩包文件
+     */
+    public static void unZip() throws Exception {
+        //获取要解压到的地址
+        String[] array=url.split("\\\\");
+        String newUrl=String.join("\\\\", Arrays.copyOf(array, array.length - 1));
+        //删除文件夹，重新解压
+        boolean flag=new File(url).delete();
+        if(flag){
+            UnzipUtility.unzip(url+".zip",newUrl);
+        }
     }
 
     /**
@@ -91,7 +127,7 @@ public class FileSearch {
 
 
         Map<String , Long> countMap = fileList.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
-        List<String > compareList = countMap.keySet().stream().filter(key -> countMap.get(key) > 1).distinct().collect(Collectors.toList());
+        List<String > compareList = countMap.keySet().stream().filter(key -> countMap.get(key) > 1).collect(Collectors.toList());
         for (int i = 0; i < compareList.size(); i++) {
             for (int j = 0; j < fileListPath.size(); j++) {
                 String path=fileListPath.get(j).split(tarType)[1];
