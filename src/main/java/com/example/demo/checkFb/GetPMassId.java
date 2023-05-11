@@ -17,14 +17,17 @@ import java.util.List;
  */
 public class GetPMassId {
     public static void main(String[] args) throws Exception {
-        String fileName = "D:\\Documents\\Tencent Files\\1793933244\\FileRecv\\20230105投产补丁.XLSX";
+        String fileName = "D:\\\\Documents\\\\Tencent Files\\\\1793933244\\\\FileRecv\\\\服务费冻结导入.xlsx";
         FileInputStream inputStream = new FileInputStream(fileName);
         List<List<Object>> list = ExcelUtils.getListByExcel(inputStream, fileName);
         StringBuffer stringBuffer=new StringBuffer();
-        for (int i = 1; i <list.size()-1; i++) {
+        for (int i = 0; i <list.size(); i++) {
             ArrayList arrayList= (ArrayList) list.get(i);
-            stringBuffer.append(arrayList.get(2)).append(";");
+            stringBuffer.append("'");
+            stringBuffer.append(arrayList.get(0)).append("',");
         }
         System.out.println(stringBuffer.toString());
     }
+
+
 }
