@@ -22,7 +22,7 @@ public class ExcelUtils {
     private final static String excel2007U =".xlsx";  //2007版本
 
     /**
-     * @Description：获取IO流中的数据，组装成List<List<Object>>对象
+     * @Description： 获取IO流中的数据，组装成List<List<Object>>对象
      */
     public static List<List<Object>> getListByExcel(InputStream in, String fileName) throws Exception{
         List<List<Object>> list = null;
@@ -53,7 +53,9 @@ public class ExcelUtils {
                     cell = row.getCell(y);
                     li.add(getValue(cell));
                 }
-                list.add(li);
+                if(li.size()>=30){
+                    list.add(li);
+                }
             }
         }
 
