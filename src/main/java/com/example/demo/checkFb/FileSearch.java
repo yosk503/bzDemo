@@ -1,7 +1,6 @@
 package com.example.demo.checkFb;
 
 
-
 import com.example.demo.util.Application;
 import com.example.demo.util.ExcelUtils;
 import com.example.demo.util.sort;
@@ -56,19 +55,7 @@ public class FileSearch {
         System.out.println("当前文件路径："+url);
         //判断是否已经解压
         if(new File(url).exists()){
-            System.out.println("当前压缩包已经解压，请确认是否使用已解压文件夹或者重新解压\n"+"1-使用，2-重新解压");
-            Scanner scanner=new Scanner(System.in);
-            String input = scanner.nextLine();
-            if("1".equals(input)){
-                //直接使用
-               startCheck();
-            }else if("2".equals(input)){
-                unZip();
-                startCheck();
-            }else {
-                //提示输入错误
-                throw new Exception("请选择正确的方式！");
-            }
+            checkAlreadyUnzip();
         }else {
             unZip();
             startCheck();
@@ -76,6 +63,27 @@ public class FileSearch {
         System.out.println("=====================================发版补丁检查结束============================");
     }
 
+    /**
+     * 已经解压的文件处理
+     */
+    public static void checkAlreadyUnzip() throws Exception {
+        System.out.println("当前压缩包已经解压，请确认是否使用已解压文件夹或者重新解压\n"+"1-使用，2-重新解压");
+        Scanner scanner=new Scanner(System.in);
+        String input = scanner.nextLine();
+        if("1".equals(input)){
+            //直接使用
+            startCheck();
+        }else if("2".equals(input)){
+            unZip();
+            startCheck();
+        }else {
+            throw new Exception("请选择正确的方式！");
+        }
+    }
+
+    /**
+     * 正常校验 执行方法
+     */
     public static void startCheck() throws Exception {
         String[] files = new File(url).list();
         String excelUrl=getExcelName(files);
@@ -107,6 +115,9 @@ public class FileSearch {
         UnzipUtility.unzip(url+".zip",newUrl);
     }
 
+    /**
+     * 删除文件
+     */
     public static void deleteFileList(File dir) throws Exception {
         if (!dir.exists() || !dir.isDirectory()) {// 判断是否存在目录
             return;
@@ -116,7 +127,7 @@ public class FileSearch {
             File file = new File(dir, files[i]);
             BasicFileAttributes basicFileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
             if (basicFileAttributes.isRegularFile()) {// 如果文件
-                long size= basicFileAttributes.size() /(1024*1024);
+                long size= basicFileAttributes.size();
                 boolean result=file.delete();
                 if (result) {
                     System.out.println(file.getName()+"文件大小："+size+"M---"+"删除成功");

@@ -9,6 +9,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
+ * 解压压缩包文件
  * @author yanglonggui
  */
 public class UnzipUtility {
@@ -19,7 +20,7 @@ public class UnzipUtility {
         System.out.println("=====================================开始压缩包解压============================");
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
-            destDir.mkdir();
+           boolean flag= destDir.mkdir();
         }
         ZipInputStream zipIn = new ZipInputStream(Files.newInputStream(Paths.get(zipFilePath)),Charset.forName("GBK"));
         ZipEntry entry = zipIn.getNextEntry();

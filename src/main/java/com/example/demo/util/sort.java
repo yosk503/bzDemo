@@ -8,15 +8,6 @@ import java.util.ArrayList;
 
 
 public class sort {
-    public static void main(String args[]) {
-        String path1 = "D:\\投产补丁\\20230105投产补丁\\gm\\";
-        String path2 = "D:\\投产补丁\\20230105投产补丁\\wy\\";
-        String path3 = "D:\\投产补丁\\20230105投产补丁\\报表\\";
-        findpath(path1);
-        findpath(path2);
-        findpath(path3);
-    }
-
     public static void sort(String[] a) {
         for (int i = 0; i < a.length - 1; i++) {
             for (int j = 0; j < a.length - 1 - i; j++) {
