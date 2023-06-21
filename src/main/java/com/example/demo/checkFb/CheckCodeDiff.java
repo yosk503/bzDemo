@@ -8,6 +8,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 import static java.sql.Types.BOOLEAN;
@@ -62,7 +65,7 @@ public class CheckCodeDiff {
         List<String> one = new ArrayList<>(getDifferent(fileListOne, fileListTwo,splitOne[splitOne.length-1],splitTwo[splitTwo.length-1]));
         //再以环境为主，找出本地与环境不同的
         List<String> two = new ArrayList<>(getDifferent(fileListTwo, fileListOne,splitTwo[splitTwo.length-1],splitOne[splitOne.length-1]));
-        //获取两个list的交集(本地和柜面不相同的文件)
+        //获取两个list的交集(本地和柜面不相同的文件，由于生产以及本地编译环境不同，导致编译后的字节码文件不相同，所以只能判断两个文件夹相差的文件)
         List<String> intersection = one.stream().filter(two::contains).collect(toList());
         System.out.println("本地和柜面不相同的文件");
         intersection.parallelStream().forEach(System.out :: println);
@@ -152,16 +155,15 @@ public class CheckCodeDiff {
         BufferedReader br2 = null;
         boolean areEqual = true;
         try {
-            br1 = new BufferedReader(new FileReader(fileOne));
-            br2 = new BufferedReader(new FileReader(fileTwo));
+            br1 = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(fileOne)), StandardCharsets.UTF_8));
+            br2 = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get(fileTwo)), StandardCharsets.UTF_8));
             String line1 = br1.readLine();
             String line2 = br2.readLine();
             while (line1 != null || line2 != null) {
-                if(line1 == null||line2 == null){
-                    areEqual = false;
-                    break;
-                }
-                if (!line1.equals(line2)) {
+                assert line1 != null;
+                String s = line1.trim();
+                String replaceAll = line2.trim();
+                if (!s.equals(replaceAll)) {
                     areEqual = false;
                     break;
                 }
@@ -170,6 +172,7 @@ public class CheckCodeDiff {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            areEqual=false;
         }finally {
             if (br1 != null){
                 br1.close();
