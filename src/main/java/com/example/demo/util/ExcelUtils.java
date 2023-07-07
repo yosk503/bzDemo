@@ -23,6 +23,8 @@ public class ExcelUtils {
 
     /**
      * @Description： 获取IO流中的数据，组装成List<List<Object>>对象
+     * 该方法只针对excel文件列数 大于30列的数据，低于30列暂时不考虑，
+     * 需要将代码中大于30列才添加的代码注释掉，具体可通过版本记录进行查看
      */
     public static List<List<Object>> getListByExcel(InputStream in, String fileName) throws Exception{
         List<List<Object>> list = null;

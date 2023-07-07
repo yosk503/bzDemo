@@ -19,7 +19,7 @@ public class GetPMassId {
      * 然后获取补丁编号，再以分号分隔开，方便补丁下载
      */
     public static void main(String[] args) throws Exception {
-        String fileName = "D:\\Documents\\Tencent Files\\1793933244\\FileRecv\\20221215.XLSX";
+        String fileName = "D:\\logs\\shiro\\20230706投产补丁.XLSX";
         FileInputStream inputStream=null;
         try{
             inputStream = new FileInputStream(fileName);
@@ -28,7 +28,7 @@ public class GetPMassId {
             StringBuffer stringBuffer=new StringBuffer();
             for (int i = 1; i <list.size()-1; i++) {
                 ArrayList<Object> arrayList= (ArrayList<Object>) list.get(i);
-                stringBuffer.append(arrayList.get(1)).append(";");
+                stringBuffer.append(arrayList.get(2)).append(";");
             }
             System.out.println(stringBuffer);
         }catch (Exception e){

@@ -17,7 +17,7 @@ public class UnzipUtility {
     private static final int BUFFER_SIZE = 4096;
 
     public static void unzip(String zipFilePath, String destDirectory) throws Exception {
-        System.out.println("=====================================开始压缩包解压============================");
+        System.out.println("=====================================开始压缩包文件解压，文件路径："+zipFilePath+"============================");
         File destDir = new File(destDirectory);
         if (!destDir.exists()) {
            boolean flag= destDir.mkdir();

@@ -18,7 +18,7 @@ public class RenameExcelSheet {
      */
     public static void main(String[] args) throws Exception {
         List<String> fileNames = new ArrayList<>();
-        findFileList(new File("D:\\桌面\\黄鑫10"),fileNames,"兵装融资租赁项目组周报");
+        findFileList(new File("D:\\桌面\\A2-项目个人周报"),fileNames,"兵装融资租赁项目周报");
     }
 
     /**
@@ -33,10 +33,6 @@ public class RenameExcelSheet {
             file = new FileInputStream(url);
             workbook = WorkbookFactory.create(file);
             workbook.setSheetName(0, newName);
-            if(url.contains("）")||(url.contains("（"))){
-                url=url.replace("）",")").replace("（","(");
-                flag=true;
-            }
             fileOut = new FileOutputStream(url);
             workbook.write(fileOut);
             workbook.close();
@@ -72,10 +68,8 @@ public class RenameExcelSheet {
             BasicFileAttributes basicFileAttributes = Files.readAttributes(interFile.toPath(), BasicFileAttributes.class);
             if (basicFileAttributes.isRegularFile()&&s.endsWith("xlsx")) {// 如果文件
                 fileNames.add(interFile.getAbsolutePath());
+                System.out.println("开始修改文件："+interFile.getAbsolutePath());
                 boolean flag=renameExcelSheet(interFile.getAbsolutePath(),newName);
-                if(fileName.contains("）")||(fileName.contains("（"))) {
-                   flag= interFile.delete();
-                }
             } else {// 如果是目录
                 findFileList(interFile, fileNames,newName);// 回调自身继续查询
             }
