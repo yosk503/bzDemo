@@ -1,32 +1,34 @@
 package com.example.demo.pmass.entity;
 
 
+import lombok.Data;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Transient;
-import java.io.Serializable;
 
-
-
-
+@Data
 @Entity
-public class pmPatchReg implements Serializable {
+public class PmPatchReg {
     @Id
     private String  patchCode;
 
     private String patchDisc;
 
     private String patchDever;
+    @Lob
     @Transient
-    private String fileBody;
+    private byte[] fileBody;
+
     @Transient
     private String fileName;
 
-    public String  getPatchCode() {
+    public String getPatchCode() {
         return patchCode;
     }
 
-    public void setPatchCode(String  patchCode) {
+    public void setPatchCode(String patchCode) {
         this.patchCode = patchCode;
     }
 
@@ -38,11 +40,19 @@ public class pmPatchReg implements Serializable {
         this.patchDisc = patchDisc;
     }
 
-    public String getFileBody() {
+    public String getPatchDever() {
+        return patchDever;
+    }
+
+    public void setPatchDever(String patchDever) {
+        this.patchDever = patchDever;
+    }
+
+    public  byte[] getFileBody() {
         return fileBody;
     }
 
-    public void setFileBody(String fileBody) {
+    public void setFileBody( byte[] fileBody) {
         this.fileBody = fileBody;
     }
 
@@ -52,13 +62,5 @@ public class pmPatchReg implements Serializable {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
-    }
-
-    public String getPatchDever() {
-        return patchDever;
-    }
-
-    public void setPatchDever(String patchDever) {
-        this.patchDever = patchDever;
     }
 }

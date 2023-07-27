@@ -7,6 +7,13 @@ import java.util.stream.Collectors;
 
 public class AllotApplyId {
     public static void main(String[] args) {
+        urgentAllot("02",5);
+    }
+
+    /**
+     * 开始分单
+     */
+    public static void urgentAllot(String type,int fixedNumber){
         //封装成以 客户为key，是否参与过分单和单据为value的map
         Map<String, Map<String, List<String>>> applyListMap = getApplyId();
         //以applyId为主键 客户名以及是否已经分单作为value
@@ -16,8 +23,7 @@ public class AllotApplyId {
         //1.固定值分配 直接获取固定值
         //2.平均后分配  计算平均值只获取整数部分
         //3.分配后平均  计算平均值只获取整数部分
-        String type = "02";
-        int average = getAverage(nowHaveCountMap, applyIdMap.size(), nowHaveCountMap.size(), type, 5);
+        int average = getAverage(nowHaveCountMap, applyIdMap.size(), nowHaveCountMap.size(), type, fixedNumber);
         //分配之后每个用户应该达到的预估值
         Map<String, Integer> predictCountMap = getFixed(nowHaveCountMap, average, type);
         Map<String, Map<String, List<String>>> finalMap = new HashMap<>();
@@ -71,15 +77,18 @@ public class AllotApplyId {
         });
     }
 
+    /**
+     * 获取以单据为key的map
+     */
     public static Map<String, Map<String, String>> getApplyIdMap(Map<String, Map<String, List<String>>> applyMap) {
         Map<String, Map<String, String>> returnMap = new HashMap<>();
         for (String key : applyMap.keySet()) {
             List<String> list = applyMap.get(key).get("applyId");
-            for (int i = 0; i < list.size(); i++) {
+            for (String s : list) {
                 Map<String, String> map = new HashMap<>();
                 map.put("custCode", key);
                 map.put("allotFlag", "false");
-                returnMap.put(list.get(i), map);
+                returnMap.put(s, map);
             }
         }
         return returnMap;
@@ -148,6 +157,8 @@ public class AllotApplyId {
     /**
      * 平均后分配 先平均在分配，批次平均
      * 重新计算还需要分配的排班人员有几个，还未分配的单据有几个
+     * 第一次分配：将未分配的单据直接给单据量最少的用户，且分配完以后的单据量不能超过重新计算后的平均值
+     * 第二次分配：将未分配的单据直接给单据量最少的用户，且分配完以后的单据量不能超过重新计算后的平均值+1，防止平均值只取了整数部分，导致单据没有分配完
      */
     public static Map<String, List<Map<String, String>>> getBeforeAverageResult(Map<String, Map<String, List<String>>> finalMap, Map<String, Map<String, String>> applyIdMap, int average) {
         //将未分配的单据直接给单据量最少的用户
@@ -182,6 +193,8 @@ public class AllotApplyId {
     /**
      * 分配后平均 全部包括历史都实现分配后的结果平均
      * 重新计算还需要分配的排班人员有几个，还未分配的单据有几个
+     * 第一次分配：将未分配的单据直接给单据量最少的用户，且分配完以后的单据量不能超过重新计算后的平均值
+     * 第二次分配：将未分配的单据直接给单据量最少的用户，且分配完以后的单据量不能超过重新计算后的平均值+1，防止平均值只取了整数部分，导致单据没有分配完
      */
     public static Map<String, List<Map<String, String>>> getAfterAverageResult(Map<String, Map<String, List<String>>> finalMap, Map<String, Map<String, String>> applyIdMap, int average) {
 
@@ -216,12 +229,6 @@ public class AllotApplyId {
 
         return getFinallyMapResult(finalMap, applyIdMap);
     }
-
-    /**
-     * 还有排班人员 单据量不达标 ，首先计算还需分配的排班人员每个人应该分几个
-     * 第一次分配：将未分配的单据直接给单据量最少的用户，且分配完以后的单据量不能超过重新计算后的平均值
-     * 第二次分配：将未分配的单据直接给单据量最少的用户，且分配完以后的单据量不能超过重新计算后的平均值+1，防止平均值只取了整数部分，导致单据没有分配完
-     */
 
     /**
      * 封装返回分单成功以及分单失败的单据
