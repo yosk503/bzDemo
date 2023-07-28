@@ -1,4 +1,4 @@
-package com.example.demo.util;
+package com.example.demo.util.commonUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.File;

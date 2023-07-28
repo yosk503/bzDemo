@@ -2,7 +2,7 @@ package com.example.demo.checkFb;
 
 
 
-import com.example.demo.util.ExcelUtils;
+import com.example.demo.util.excelUtil.ExcelUtils;
 
 import java.io.FileInputStream;
 import java.util.ArrayList;

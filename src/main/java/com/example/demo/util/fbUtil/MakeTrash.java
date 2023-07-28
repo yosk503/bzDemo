@@ -1,4 +1,4 @@
-package com.example.demo.util;
+package com.example.demo.util.fbUtil;
 
 
 import java.io.File;
@@ -7,7 +7,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class sort {
+public class MakeTrash {
     public static void sort(String[] a) {
         for (int i = 0; i < a.length - 1; i++) {
             for (int j = 0; j < a.length - 1 - i; j++) {

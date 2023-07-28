@@ -1,4 +1,4 @@
-package com.example.demo.util;
+package com.example.demo.util.commonUtil;
 
 
 import java.nio.charset.StandardCharsets;

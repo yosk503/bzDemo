@@ -1,10 +1,10 @@
 package com.example.demo.checkFb;
 
 
-import com.example.demo.util.Application;
-import com.example.demo.util.ExcelUtils;
-import com.example.demo.util.UnzipUtility;
-import com.example.demo.util.sort;
+import com.example.demo.util.commonUtil.Application;
+import com.example.demo.util.excelUtil.ExcelUtils;
+import com.example.demo.util.commonUtil.UnzipUtility;
+import com.example.demo.util.fbUtil.MakeTrash;
 import org.codehaus.plexus.archiver.tar.TarEntry;
 import org.codehaus.plexus.archiver.tar.TarInputStream;
 import org.springframework.util.ObjectUtils;
@@ -102,7 +102,7 @@ public class FileSearch {
                 checkFile(excelMap,files[i]);
                 for (int j = 0; j < checkFiles.length; j++) {
                     if(files[i].equals(checkFiles[j])&&!"调度".equals(files[i])){
-                        sort.findpath(url+"\\"+files[i]+"\\");
+                        MakeTrash.findpath(url+"\\"+files[i]+"\\");
                     }
                 }
             }

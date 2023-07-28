@@ -1,4 +1,4 @@
-package com.example.demo.util;
+package com.example.demo.util.bzUtil;
 
 import org.apache.commons.lang3.StringUtils;
 

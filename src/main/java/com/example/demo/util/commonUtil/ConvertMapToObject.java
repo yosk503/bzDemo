@@ -1,4 +1,4 @@
-package com.example.demo.util;
+package com.example.demo.util.commonUtil;
 
 import org.hibernate.engine.jdbc.SerializableBlobProxy;
 
@@ -32,8 +32,6 @@ public class ConvertMapToObject {
                             SerializableBlobProxy serializableBlobProxy = (SerializableBlobProxy) invocationHandler;
                             Blob blob = serializableBlobProxy.getWrappedBlob();
                             if (blob != null) {
-                                Class<?> tClass=blob.getClass().getSuperclass();
-                                System.out.println(blob.length());
                                 fieldValue = blob.getBytes(1, (int) blob.length());
                             }
                         }
