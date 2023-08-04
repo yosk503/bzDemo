@@ -136,7 +136,7 @@ public class FileSearch {
                 long size= basicFileAttributes.size();
                 boolean result=file.delete();
                 if (result) {
-                    System.out.println(file.getName()+"文件大小："+size+"KB---"+"删除成功");
+                    System.out.println(file.getName()+"文件大小："+size+"---"+"删除成功");
                 }
             } else {// 如果是目录
                 deleteFileList(file);// 回调自身继续删除
