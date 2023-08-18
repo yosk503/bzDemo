@@ -24,6 +24,8 @@ public class PmPatchReg {
     @Transient
     private String fileName;
 
+    private String patchFiles;
+
     public String getPatchCode() {
         return patchCode;
     }
@@ -62,5 +64,13 @@ public class PmPatchReg {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public String getPatchFiles() {
+        return patchFiles;
+    }
+
+    public void setPatchFiles(String patchFiles) {
+        this.patchFiles = patchFiles;
     }
 }

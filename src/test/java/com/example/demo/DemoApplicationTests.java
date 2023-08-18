@@ -32,7 +32,7 @@ class DemoApplicationTests {
             List<String> patchCodeList = Arrays.asList(downloadFile.loadFileAsString().split(";"));
             //查询数据
             List<PmPatchReg> entityList = ConvertMapToObject.convertMapToObject(pMassDao.queryAllByPatchCode(patchCodeList), PmPatchReg.class);
-            downloadFile.downLoanPMassFile(entityList);
+            downloadFile.downLoanPMassFile(entityList,"uat");
         }catch (Exception e){
             e.printStackTrace();
             throw new Exception(e.getMessage());

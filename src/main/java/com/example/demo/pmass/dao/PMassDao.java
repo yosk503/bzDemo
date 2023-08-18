@@ -13,7 +13,7 @@ public interface PMassDao extends JpaRepository<PmPatchReg, Long> {
             "       PR.PATCH_DISC,\n" +
             "       PM.FILEBODY FILE_BODY,\n" +
             "       PM.FILE_NAME FILE_NAME,\n" +
-            "       PR.PATCH_DEVER\n" +
+            "       PR.PATCH_DEVER,PR.PATCH_FILES\n" +
             "  FROM PM_ATTACH_FILES PM\n" +
             " INNER JOIN PM_PATCH_REG PR\n" +
             "    ON PM.BUS_ID = PR.PATCH_ID\n" +
@@ -27,7 +27,7 @@ public interface PMassDao extends JpaRepository<PmPatchReg, Long> {
             "       PM.FILEBODY FILE_BODY,\n" +
             "       PM.FILE_NAME FILE_NAME,\n" +
             "       PR.PATCH_DEVER\n" +
-            "  FROM PM_ATTACH_FILES PM\n" +
+            "  FROM PM_ATTACH_FILES PM,PR.PATCH_FILES\n" +
             " INNER JOIN PM_PATCH_REG PR\n" +
             "    ON PM.BUS_ID = PR.PATCH_ID\n" +
             " WHERE PR.PATCH_CODE IN (:patchCode)",nativeQuery = true)

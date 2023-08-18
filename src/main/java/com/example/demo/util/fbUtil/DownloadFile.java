@@ -21,7 +21,7 @@ import java.util.Objects;
 public class DownloadFile {
 
 
-    public void downLoanPMassFile( List<PmPatchReg> entityList) throws Exception {
+    public void downLoanPMassFile( List<PmPatchReg> entityList,String environment) throws Exception {
         try{
             //校验文件所需要的数据是否为空
             if((entityList != null && entityList.size() == 0)){
@@ -30,7 +30,8 @@ public class DownloadFile {
                 checkEntity(Objects.requireNonNull(entityList));
                 //判断目录有无数据 没有则创建
                 String pMassDir = Application.getProperty("pmass_download_dir");
-                String backDir = Application.getProperty("pmass_backFile_dir") + "\\" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + "\\" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
+                String backDir = Application.getProperty("pmass_backFile_dir") + "\\" + new SimpleDateFormat("yyyyMMdd").format(new Date())
+                        + "\\" + new SimpleDateFormat("yyyyMMddHHmmss").format(new Date());
                 boolean fileFlag = makeFile(pMassDir,"path");
                 //文件备份 以及删除
                 if (fileFlag) {
@@ -44,7 +45,7 @@ public class DownloadFile {
                     String patchDever = pmPatchReg.getPatchDever();//登记人
                     //根据补丁描述获取补丁存放路径
                     String filePath = getPath(patchCode, patchDisc, fileName, pMassDir);
-                    String absoluteName = patchCode + "_" + patchDever + "_" + fileName;
+                    String absoluteName = patchCode + "_" + patchDever +"_"+environment+ "_" + fileName;
                     //生成文件
                     try {
                         fileFlag = makeFile(filePath,"path");
@@ -150,7 +151,6 @@ public class DownloadFile {
      */
     public String getPath(String patchCode, String patchDisc, String fileName, String pMassDir) throws Exception {
         //获取根目录
-
         String path;
         if ((patchDisc.contains("【柜面】") || patchDisc.contains("[柜面]")) && fileName.endsWith("tar")) {
             path = "gm";
@@ -162,6 +162,8 @@ public class DownloadFile {
             path = "调度";
         } else if (fileName.endsWith("txt")) {
             path = "sql";
+        } else if(patchDisc.contains("【工作流】") || patchDisc.contains("[工作流]")){
+            path="工作流";
         } else {
             throw new Exception("补丁描述错误:" + patchCode);
         }
