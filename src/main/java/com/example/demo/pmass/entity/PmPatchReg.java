@@ -11,66 +11,50 @@ import javax.persistence.Transient;
 @Data
 @Entity
 public class PmPatchReg {
+
+    /**
+     * 补丁编号
+     */
     @Id
     private String  patchCode;
 
+    /**
+     * 补丁描述
+     */
     private String patchDisc;
 
+    /**
+     * 开发人员
+     */
     private String patchDever;
+
+    /**
+     * 附件
+     */
     @Lob
     @Transient
     private byte[] fileBody;
 
+    /**
+     * 附件名称
+     */
     @Transient
     private String fileName;
 
+    /**
+     * 涉及文件
+     */
     private String patchFiles;
 
-    public String getPatchCode() {
-        return patchCode;
-    }
+    /**
+     * 状态
+     * 01-登记
+     * 02-已发测试环境
+     * 03-验证完毕
+     * 04-已投产
+     * 05-待发版
+     * 06-作废
+     */
 
-    public void setPatchCode(String patchCode) {
-        this.patchCode = patchCode;
-    }
-
-    public String getPatchDisc() {
-        return patchDisc;
-    }
-
-    public void setPatchDisc(String patchDisc) {
-        this.patchDisc = patchDisc;
-    }
-
-    public String getPatchDever() {
-        return patchDever;
-    }
-
-    public void setPatchDever(String patchDever) {
-        this.patchDever = patchDever;
-    }
-
-    public  byte[] getFileBody() {
-        return fileBody;
-    }
-
-    public void setFileBody( byte[] fileBody) {
-        this.fileBody = fileBody;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getPatchFiles() {
-        return patchFiles;
-    }
-
-    public void setPatchFiles(String patchFiles) {
-        this.patchFiles = patchFiles;
-    }
+    private String stat;
 }
