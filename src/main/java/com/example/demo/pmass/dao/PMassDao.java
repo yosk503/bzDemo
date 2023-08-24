@@ -21,6 +21,12 @@ public interface PMassDao extends JpaRepository<PmPatchReg, Long> {
     List<Map<String,Object>> queryAllByPatchCode(@Param("patchCode") List<String> patchCode);
 
 
+    @Query(value = "UPDATE PM_PATCH_REG PM\n" +
+            "   SET PM.STAT = :stat\n" +
+            " WHERE 1 = 1\n" +
+            "   AND PM.PATCH_CODE IN (:patchCode)",nativeQuery = true)
+    int updateStat(@Param("stat") String stat,@Param("patchCode") List<String> patchCode);
+
 
     @Query(value = "SELECT PR.PATCH_CODE,\n" +
             "       PR.PATCH_DISC,\n" +

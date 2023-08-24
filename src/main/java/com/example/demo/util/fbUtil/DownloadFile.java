@@ -13,10 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public class DownloadFile {
 
@@ -45,7 +42,7 @@ public class DownloadFile {
                     String patchDever = pmPatchReg.getPatchDever();//登记人
                     //根据补丁描述获取补丁存放路径
                     String filePath = getPath(patchCode, patchDisc, fileName, pMassDir);
-                    String absoluteName = patchCode + "_" + patchDever +"_"+environment+ "_" + fileName;
+                    String absoluteName = patchCode  + fileName.replaceAll("_","");
                     //生成文件
                     try {
                         fileFlag = makeFile(filePath,"path");
@@ -160,10 +157,12 @@ public class DownloadFile {
             path = "报表";
         } else if (patchDisc.contains("【调度】") || patchDisc.contains("[调度]")) {
             path = "调度";
-        } else if (fileName.endsWith("txt")) {
-            path = "sql";
+        } else if ((patchDisc.contains("【柜面】") || patchDisc.contains("[柜面]"))&&fileName.endsWith("txt")) {
+            path = "gmSql";
         } else if(patchDisc.contains("【工作流】") || patchDisc.contains("[工作流]")){
             path="工作流";
+        } else if ((patchDisc.contains("【网银】") || patchDisc.contains("[网银]")) && fileName.endsWith("txt")) {
+            path = "wySql";
         } else {
             throw new Exception("补丁描述错误:" + patchCode);
         }
@@ -201,5 +200,7 @@ public class DownloadFile {
             }
         }
     }
+
+
 
 }

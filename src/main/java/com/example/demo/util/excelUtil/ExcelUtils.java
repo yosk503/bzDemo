@@ -22,18 +22,18 @@ public class ExcelUtils {
      * 需要将代码中大于30列才添加的代码注释掉，具体可通过版本记录进行查看
      */
     public static List<List<Object>> getListByExcel(InputStream in, String fileName) throws Exception{
-        List<List<Object>> list = null;
+        List<List<Object>> list;
 
         //创建Excel工作薄
         Workbook work = getWorkbook(in,fileName);
         if(null == work){
             throw new Exception("创建Excel工作薄为空！");
         }
-        Sheet sheet = null;  //页数
-        Row row = null;  //行数
-        Cell cell = null;  //列数
+        Sheet sheet;  //页数
+        Row row;  //行数
+        Cell cell;  //列数
 
-        list = new ArrayList<List<Object>>();
+        list = new ArrayList<>();
         //遍历Excel中所有的sheet
         for (int i = 0; i < work.getNumberOfSheets(); i++) {
             sheet = work.getSheetAt(i);
@@ -45,7 +45,7 @@ public class ExcelUtils {
                 if(row==null){continue;}
 
                 //遍历所有的列
-                List<Object> li = new ArrayList<Object>();
+                List<Object> li = new ArrayList<>();
                 for (int y = row.getFirstCellNum(); y < row.getLastCellNum(); y++) {
                     cell = row.getCell(y);
                     li.add(getValue(cell));

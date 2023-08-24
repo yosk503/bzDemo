@@ -1,7 +1,6 @@
 package com.example.demo.checkFb;
 
 
-
 import com.example.demo.util.excelUtil.ExcelUtils;
 
 import java.io.FileInputStream;
@@ -19,18 +18,26 @@ public class GetPMassId {
      * 然后获取补丁编号，再以分号分隔开，方便补丁下载
      */
     public static void main(String[] args) throws Exception {
-        String fileName = "D:\\logs\\shiro\\20230706投产补丁.XLSX";
+      GetPMassId.getPMassId("D:\\桌面\\需求\\补丁\\工具发版\\依赖检查.XLSX");
+    }
+
+    public static List<String> getPMassId(String fileName) throws Exception {
         FileInputStream inputStream=null;
+        List<String> listReturn=new ArrayList<>();
         try{
             inputStream = new FileInputStream(fileName);
             List<List<Object>> list = ExcelUtils.getListByExcel(inputStream, fileName);
             inputStream.close();
             StringBuffer stringBuffer=new StringBuffer();
-            for (int i = 1; i <list.size()-1; i++) {
+            for (int i = 1; i <list.size(); i++) {
                 ArrayList<Object> arrayList= (ArrayList<Object>) list.get(i);
                 stringBuffer.append(arrayList.get(2)).append(";");
+                if(arrayList.get(2)!=null){
+                    listReturn.add((String) arrayList.get(2));
+                }
             }
-            System.out.println(stringBuffer);
+            //System.out.println(stringBuffer);
+            return listReturn;
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());
         }finally {
