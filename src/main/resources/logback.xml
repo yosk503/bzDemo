@@ -1,0 +1,44 @@
+<configuration>
+    <property resource="application.properties" />
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+        <encoder>
+            <pattern>%-24d{yyyy-MM-dd HH:mm:ss.S} %-5p %-5r [%t] [%5c]:%L---%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="INFO_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${pmass_log_dir}/info.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>INFO</level>
+            <onMatch>ACCEPT</onMatch>
+<!--            <onMismatch>DENY</onMismatch>-->
+        </filter>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%-24d{yyyy-MM-dd HH:mm:ss.S} %-5p %-5r [%t] [%5c]:%L---%m%n</pattern>
+        </encoder>
+    </appender>
+    <appender name="DEBUG_FILE" class="ch.qos.logback.core.FileAppender">
+        <file>${pmass_log_dir}/debug.log</file>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>DEBUG</level>
+            <onMatch>ACCEPT</onMatch>
+<!--            <onMismatch>DENY</onMismatch>-->
+        </filter>
+        <encoder>
+            <charset>UTF-8</charset>
+            <pattern>%-24d{yyyy-MM-dd HH:mm:ss.S} %-5p %-5r [%t] [%5c]:%L---%m%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="CONSOLE" />
+        <appender-ref ref="INFO_FILE" />
+        <appender-ref ref="DEBUG_FILE" />
+    </root>
+</configuration>

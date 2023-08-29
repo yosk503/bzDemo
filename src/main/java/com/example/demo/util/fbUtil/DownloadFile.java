@@ -1,7 +1,9 @@
 package com.example.demo.util.fbUtil;
 
+import com.example.demo.checkFb.FbUtil;
 import com.example.demo.pmass.entity.PmPatchReg;
 import com.example.demo.util.commonUtil.Application;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.util.FileCopyUtils;
@@ -13,12 +15,15 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.text.SimpleDateFormat;
-import java.util.*;
-
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
+@Slf4j
 public class DownloadFile {
 
 
-    public void downLoanPMassFile( List<PmPatchReg> entityList,String environment) throws Exception {
+    public void downLoanPMassFile(List<PmPatchReg> entityList,String environment,String version,String excelSuffix) throws Exception {
         try{
             //校验文件所需要的数据是否为空
             if((entityList != null && entityList.size() == 0)){
@@ -33,6 +38,17 @@ public class DownloadFile {
                 //文件备份 以及删除
                 if (fileFlag) {
                     backFile(pMassDir, backDir);
+                    //移动excel到内部文件夹，防止下次操作失误，导致发版出错
+                    if("product".equals(environment)){
+                        String excelUrl = FbUtil.getExcelPath(pMassDir,version,excelSuffix);
+                        String removeUrl=pMassDir+"\\"+FbUtil.getExcelName(pMassDir,version,excelSuffix);
+                        File file=new File(excelUrl);
+                        File newFile=new File(removeUrl);
+                        if (!newFile.exists()) {
+                            boolean flag = newFile.mkdirs();
+                        }
+                        Files.copy(file.toPath(), newFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                    }
                 }
 
                 for (PmPatchReg pmPatchReg : entityList) {
@@ -42,7 +58,7 @@ public class DownloadFile {
                     String patchDever = pmPatchReg.getPatchDever();//登记人
                     //根据补丁描述获取补丁存放路径
                     String filePath = getPath(patchCode, patchDisc, fileName, pMassDir);
-                    String absoluteName = patchCode  + fileName.replaceAll("_","");
+                    String absoluteName = patchCode  +"_"+ fileName;
                     //生成文件
                     try {
                         fileFlag = makeFile(filePath,"path");
@@ -51,7 +67,7 @@ public class DownloadFile {
                         FileOutputStream fileOutputStream = new FileOutputStream(attachFile);
                         fileOutputStream.write(pmPatchReg.getFileBody());
                         fileOutputStream.close();
-                        System.out.println(absoluteName+"   文件已成功生成!");
+                        log.info(absoluteName+"   文件已成功生成!");
                     } catch (Exception e) {
                         System.out.println(absoluteName+"   生成文件时出现错误：" + e.getMessage());
                     }
@@ -200,7 +216,6 @@ public class DownloadFile {
             }
         }
     }
-
 
 
 }

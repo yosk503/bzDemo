@@ -2,12 +2,12 @@ package com.example.demo.checkFb;
 
 
 import com.example.demo.util.commonUtil.Application;
-import com.example.demo.util.excelUtil.ExcelUtils;
 import com.example.demo.util.commonUtil.UnzipUtility;
+import com.example.demo.util.excelUtil.ExcelUtils;
 import com.example.demo.util.fbUtil.MakeTrash;
+import lombok.extern.slf4j.Slf4j;
 import org.codehaus.plexus.archiver.tar.TarEntry;
 import org.codehaus.plexus.archiver.tar.TarInputStream;
-import org.springframework.util.ObjectUtils;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -27,20 +27,19 @@ import java.util.stream.Collectors;
  * @date: 2023/3/22
  * 检查发版文件下的所有文件，检查依赖以及非法文件
  */
+@Slf4j
 public class FileSearch {
     public static String url;
     public static String excelSuffix;
     public static String tarType;
     public static String[] illegalFile;
     public static String[] checkFiles;
-
     public static String checkFile;
-
     public static String version;
 
     static {
         try {
-            url = Application.getProperty("fb_url");
+            url = Application.getProperty("pmass_download_dir");
             tarType = Application.getProperty("tarType");
             excelSuffix = Application.getProperty("excelSuffix");
             String illegal = Application.getProperty("illegalFile");
@@ -63,8 +62,8 @@ public class FileSearch {
      */
 
     public static void startCheckFile() throws Exception {
-        System.out.println("=====================================发版补丁检查开始============================");
-        System.out.println("当前文件路径：" + url);
+        log.info("=====================================发版补丁检查开始============================");
+        log.info("当前文件路径：" + url);
         //判断是否已经解压
         if (new File(url).exists()) {
             checkAlreadyUnzip();
@@ -72,7 +71,7 @@ public class FileSearch {
             unZip();
             startCheck();
         }
-        System.out.println("=====================================发版补丁检查结束============================");
+        log.info("=====================================发版补丁检查结束============================");
     }
 
     /**
@@ -80,7 +79,7 @@ public class FileSearch {
      */
     public static void checkAlreadyUnzip() throws Exception {
         if (new File(url + ".zip").exists()) {
-            System.out.println("当前压缩包已经解压，请确认是否使用已解压文件夹或者重新解压\n" + "1-使用，2-重新解压");
+            log.info("当前压缩包已经解压，请确认是否使用已解压文件夹或者重新解压\n" + "1-使用，2-重新解压");
             Scanner scanner = new Scanner(System.in);
             String input = scanner.nextLine();
             if ("1".equals(input)) {
@@ -103,11 +102,11 @@ public class FileSearch {
      */
     public static void startCheck() throws Exception {
         String[] files = new File(url).list();
-        String excelUrl = getExcelName(url);
+        String excelUrl =FbUtil.getExcelName(url,version,excelSuffix);
         files = Arrays.stream(files).filter((str) -> checkFile.contains(str)).collect(Collectors.toList()).toArray(new String[0]);
         String newUrl = url;
         if ("new".equals(version)) {
-            newUrl = getPrefix(newUrl);
+            newUrl = FbUtil.getPrefix(newUrl);
         }
         Map<String, String> excelMap = getExcelMap(newUrl + "\\" + excelUrl);
         //排除key为null的情况
@@ -115,7 +114,7 @@ public class FileSearch {
         for (int i = 0; i < files.length; i++) {
             File file = new File(url + "\\" + files[i]);
             if (!file.isFile()) {
-                System.out.println("=====================================开始检查文件" + files[i] + "============================");
+               log.info("=====================================开始检查文件" + files[i] + "============================");
                 checkFile(excelMap, files[i]);
                 for (int j = 0; j < checkFiles.length; j++) {
                     if (files[i].equals(checkFiles[j]) && !"调度".equals(files[i])) {
@@ -153,7 +152,7 @@ public class FileSearch {
                 long size = basicFileAttributes.size();
                 boolean result = file.delete();
                 if (result) {
-                    System.out.println(file.getName() + "文件大小：" + size + "---" + "删除成功");
+                    log.info(file.getName() + "文件大小：" + size + "---" + "删除成功");
                 }
             } else {// 如果是目录
                 deleteFileList(file);// 回调自身继续删除
@@ -168,10 +167,10 @@ public class FileSearch {
         List<Map<String, String>> fileNames = new ArrayList<>();
         //每个压缩包的文件
         fileNames = FileSearch.findFileList(new File(url + "\\" + files), fileNames);
-//        fileNames.forEach(map -> {
-//            map.forEach((key, value) -> System.out.println(value));
-//            System.out.println(); // 输出空行
-//        });
+        fileNames.forEach(map -> {
+            map.forEach((key, value) -> log.debug(value));
+            log.debug(""); // 输出空行
+        });
         //压缩包中的路径
         List<String> fileList = new ArrayList<>();
         //全路径
@@ -193,7 +192,7 @@ public class FileSearch {
                 if (path.substring(1).equals(compareList.get(i))) {
                     String name = getTarName(fileListPath.get(j));
                     name = name.substring(0, name.indexOf("_"));
-                    System.out.println("冲突文件：" + compareList.get(i) + "，所在文件的位置：" + fileListPath.get(j) + "，涉及到的补丁编号：" + name + ",登记人为：" + excelMap.get(name));
+                    log.info("冲突文件：" + compareList.get(i) + "，所在文件的位置：" + fileListPath.get(j) + "，涉及到的补丁编号：" + name + ",登记人为：" + excelMap.get(name));
                 }
             }
         }
@@ -202,7 +201,7 @@ public class FileSearch {
         for (int i = 0; i < illegalFile.length; i++) {
             for (int j = 0; j < fileListPath.size(); j++) {
                 if (fileListPath.get(j).contains(illegalFile[i])) {
-                    System.out.println("非法文件的路径为：" + fileListPath.get(j));
+                   log.info("非法文件的路径为：" + fileListPath.get(j));
                 }
             }
         }
@@ -219,7 +218,10 @@ public class FileSearch {
             if (file.isFile()) {
                 if (file.getName().endsWith(".tar")) {
                     BasicFileAttributes basicFileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
-                    //System.out.println("投产文件名：" + file.getName() + "    文件大小：" + basicFileAttributes.size() / 1024 + "KB");
+                    log.debug("投产文件名：" + file.getName() + "    文件大小：" + basicFileAttributes.size() / 1024 + "KB");
+                    if(basicFileAttributes.size() / 1024 ==0){
+                        throw new Exception("当前文件:"+file.getName()+"---大小为0KB,请仔细检查!");
+                    }
                     fileList.add(getZipFilePath(dir + "\\" + file.getName()));
                 }
             } else {
@@ -280,28 +282,8 @@ public class FileSearch {
         return map;
     }
 
-    /**
-     * 获取投产文件名称
-     */
-    public static String getExcelName(String urlRoot) throws Exception {
-        String excelName = "";
-        String[] excelType = excelSuffix.split(";");
-        if ("new".equals(version)) {
-            urlRoot = getPrefix(urlRoot);
-        }
-        String[] files = new File(urlRoot).list();
-        for (String url : files) {
-            for (int i = 0; i < excelType.length; i++) {
-                if (url.contains(excelType[i])) {
-                    excelName = url;
-                }
-            }
-        }
-        if (ObjectUtils.isEmpty(excelName)) {
-            throw new Exception("未找到投产的excel，请检查");
-        }
-        return excelName;
-    }
+
+
 
     /**
      * 获取tar包的名称
@@ -315,13 +297,5 @@ public class FileSearch {
             }
         }
         return tarName;
-    }
-
-    public static String getPrefix(String path) {
-        int index = path.lastIndexOf("\\");
-        if (index != -1) {
-            return path.substring(0, index);
-        }
-        return path;
     }
 }
