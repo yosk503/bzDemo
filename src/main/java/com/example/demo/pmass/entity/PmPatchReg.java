@@ -31,6 +31,7 @@ public class PmPatchReg {
     /**
      * 附件
      */
+    private String patchId;
     @Lob
     @Transient
     private byte[] fileBody;

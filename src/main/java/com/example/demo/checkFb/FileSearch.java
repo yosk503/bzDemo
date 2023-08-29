@@ -1,23 +1,34 @@
 package com.example.demo.checkFb;
 
 
+import cn.hutool.core.io.CharsetDetector;
 import com.example.demo.util.commonUtil.Application;
 import com.example.demo.util.commonUtil.UnzipUtility;
 import com.example.demo.util.excelUtil.ExcelUtils;
 import com.example.demo.util.fbUtil.MakeTrash;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveException;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
+import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
 import org.codehaus.plexus.archiver.tar.TarEntry;
 import org.codehaus.plexus.archiver.tar.TarInputStream;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -36,6 +47,7 @@ public class FileSearch {
     public static String[] checkFiles;
     public static String checkFile;
     public static String version;
+    public static String tarPath;
 
     static {
         try {
@@ -47,6 +59,8 @@ public class FileSearch {
             checkFile = Application.getProperty("check_File");
             version = Application.getProperty("version");
             checkFiles = checkFile.split(";");
+            tarPath = Application.getProperty("pmass_tar_dir");
+
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -102,7 +116,7 @@ public class FileSearch {
      */
     public static void startCheck() throws Exception {
         String[] files = new File(url).list();
-        String excelUrl =FbUtil.getExcelName(url,version,excelSuffix);
+        String excelUrl = FbUtil.getExcelName(url, version, excelSuffix);
         files = Arrays.stream(files).filter((str) -> checkFile.contains(str)).collect(Collectors.toList()).toArray(new String[0]);
         String newUrl = url;
         if ("new".equals(version)) {
@@ -114,8 +128,8 @@ public class FileSearch {
         for (int i = 0; i < files.length; i++) {
             File file = new File(url + "\\" + files[i]);
             if (!file.isFile()) {
-               log.info("=====================================开始检查文件" + files[i] + "============================");
-                checkFile(excelMap, files[i]);
+                log.info("=====================================开始检查文件" + files[i] + "============================");
+                checkFile(excelMap, files[i], tarPath);
                 for (int j = 0; j < checkFiles.length; j++) {
                     if (files[i].equals(checkFiles[j]) && !"调度".equals(files[i])) {
                         MakeTrash.findpath(url + "\\" + files[i] + "\\");
@@ -163,10 +177,10 @@ public class FileSearch {
     /**
      * 按照根目录文件单个循环判断
      */
-    public static void checkFile(Map<String, String> excelMap, String files) throws Exception {
+    public static void checkFile(Map<String, String> excelMap, String files, String tarPath) throws Exception {
         List<Map<String, String>> fileNames = new ArrayList<>();
         //每个压缩包的文件
-        fileNames = FileSearch.findFileList(new File(url + "\\" + files), fileNames);
+        FileSearch.findFileList(new File(url + "\\" + files), fileNames, tarPath);
         fileNames.forEach(map -> {
             map.forEach((key, value) -> log.debug(value));
             log.debug(""); // 输出空行
@@ -201,7 +215,7 @@ public class FileSearch {
         for (int i = 0; i < illegalFile.length; i++) {
             for (int j = 0; j < fileListPath.size(); j++) {
                 if (fileListPath.get(j).contains(illegalFile[i])) {
-                   log.info("非法文件的路径为：" + fileListPath.get(j));
+                    log.info("非法文件的路径为：" + fileListPath.get(j));
                 }
             }
         }
@@ -210,7 +224,7 @@ public class FileSearch {
     /**
      * 遍历整个文件夹，得到返回值
      */
-    public static List<Map<String, String>> findFileList(File dir, List<Map<String, String>> fileList) throws Exception {
+    public static List<Map<String, String>> findFileList(File dir, List<Map<String, String>> fileList, String path) throws Exception {
         // 读取目录下的所有目录文件信息
         String[] files = dir.list();
         for (int i = 0; i < files.length; i++) {
@@ -219,14 +233,14 @@ public class FileSearch {
                 if (file.getName().endsWith(".tar")) {
                     BasicFileAttributes basicFileAttributes = Files.readAttributes(file.toPath(), BasicFileAttributes.class);
                     log.debug("投产文件名：" + file.getName() + "    文件大小：" + basicFileAttributes.size() / 1024 + "KB");
-                    if(basicFileAttributes.size() / 1024 ==0){
-                        throw new Exception("当前文件:"+file.getName()+"---大小为0KB,请仔细检查!");
+                    if (basicFileAttributes.size() / 1024 == 0) {
+                        throw new Exception("当前文件:" + file.getName() + "---大小为0KB,请仔细检查!");
                     }
-                    fileList.add(getZipFilePath(dir + "\\" + file.getName()));
+                    fileList.add(getZipFilePath(dir + "\\" + file.getName(), path));
                 }
             } else {
                 // 回调自身继续查询
-                findFileList(file, fileList);
+                findFileList(file, fileList, path);
             }
         }
         return fileList;
@@ -235,19 +249,43 @@ public class FileSearch {
     /**
      * 获取压缩包文件地址
      */
-    public static Map<String, String> getZipFilePath(String path) throws IOException {
-        FileInputStream inputStream = new FileInputStream(path);
-        Map<String, String> map = new HashMap<>();
-        TarInputStream tarInputStream = new TarInputStream(new BufferedInputStream(inputStream));
-        TarEntry ze;
-        while ((ze = tarInputStream.getNextEntry()) != null) {
-            if (checkIsFile(path + "\\" + ze.getName().replace("/", "\\"))) {
-                map.put(path + "\\" + ze.getName().replace("/", "\\"), ze.getName().replace("/", "\\"));
+    public static Map<String, String> getZipFilePath(String tarFilePath, String outputFolderPath) throws IOException {
+        Map<String, String> fileMap = new HashMap<>();
+        try (FileInputStream fileInputStream = new FileInputStream(tarFilePath);
+             BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+             TarArchiveInputStream tarInputStream = new TarArchiveInputStream(bufferedInputStream)) {
+            TarArchiveEntry entry;
+            while ((entry = tarInputStream.getNextTarEntry()) != null) {
+                if (!entry.isDirectory()) {
+                    String entryName = entry.getName();
+                    Path outputPath = Paths.get(outputFolderPath, entryName);
+                    Files.createDirectories(outputPath.getParent());
+                    try (OutputStream outputStream = new BufferedOutputStream(new FileOutputStream(outputPath.toFile()))) {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        while ((bytesRead = tarInputStream.read(buffer)) != -1) {
+                            outputStream.write(buffer, 0, bytesRead);
+                        }
+                    }
+                    fileMap.put(tarFilePath + "\\" + entryName, entryName);
+                }
             }
+        } catch (IOException e) {
+            throw new IOException("解压tar文件出错，请检查文件是否正确！" + tarFilePath, e);
         }
-        tarInputStream.close();
-        inputStream.close();
-        return map;
+        deleteFiles(outputFolderPath);
+        return fileMap;
+    }
+
+    public static void deleteFiles(String directory) throws IOException {
+        Path directoryPath = Paths.get(directory);
+        if (!Files.exists(directoryPath)) {
+          return;
+        }
+        Files.walk(directoryPath)
+                .sorted(Comparator.reverseOrder())
+                .map(Path::toFile)
+                .forEach(File::delete);
     }
 
     /**
@@ -281,8 +319,6 @@ public class FileSearch {
         }
         return map;
     }
-
-
 
 
     /**

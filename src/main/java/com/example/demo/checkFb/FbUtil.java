@@ -1,10 +1,14 @@
 package com.example.demo.checkFb;
 
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.springframework.util.ObjectUtils;
 
-import java.io.File;
-import java.util.Collections;
-import java.util.List;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -42,7 +46,7 @@ public class FbUtil {
         int excelCount=0;
         for (String url : files) {
             for (String s : excelType) {
-                if (url.contains(s)) {
+                if (getFileExtension(url).equals(s)) {
                     excelName = url;
                     excelCount++;
                 }
@@ -72,4 +76,13 @@ public class FbUtil {
         }
     }
 
+
+
+    public static String getFileExtension(String filename) {
+        if (filename.lastIndexOf(".") != -1 && filename.lastIndexOf(".") != 0) {
+            return filename.substring(filename.lastIndexOf(".") + 1);
+        } else {
+            return "";
+        }
+    }
 }
