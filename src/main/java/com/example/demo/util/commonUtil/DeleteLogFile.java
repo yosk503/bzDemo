@@ -26,7 +26,9 @@ public class DeleteLogFile {
         }
     }
 
-
+    /**
+     * 递归删除
+     */
     public static void findFileList(File dir, List<String> fileNames,Map<String,Long> map) throws Exception {
         if (!dir.exists() || !dir.isDirectory()) {// 判断是否存在目录
             return;

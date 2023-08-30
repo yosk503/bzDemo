@@ -20,7 +20,6 @@ import java.util.*;
 
 
 public class ExcelExport {
-
 	public static <T> void getExcelExport(List list,String url) throws Exception {
 
 		File file = new File(url);
@@ -60,7 +59,6 @@ public class ExcelExport {
 		}
 		System.out.println("--2007---"+list.size()+"条数据导数结束时间：--\n" + new Timestamp(new Date().getTime()));
 	}
-
 	public static void getTitleStyle(SXSSFWorkbook workbook, Row title) {
 		CellStyle style = workbook.createCellStyle();              // 创建样式
 		style.setAlignment(HSSFCellStyle.ALIGN_CENTER);            // 字体居中

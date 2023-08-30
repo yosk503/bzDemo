@@ -17,6 +17,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 
+/**
+ * 字段映射工具类
+ */
 public class ConvertMapToObject {
     public static <T> List<T> convertMapToObject(List<Map<String, Object>> list, Class<T> clazz) {
         List<T> classList=new ArrayList<>();
@@ -74,7 +77,6 @@ public class ConvertMapToObject {
         }
     }
 
-
     private static String convertFieldName(String fieldName) {
         StringBuilder columnName = new StringBuilder();
         for (int i = 0; i < fieldName.length(); i++) {
@@ -106,6 +108,7 @@ public class ConvertMapToObject {
         }
         return output.toString();
     }
+
     private static void setFieldValue(Object object, String fieldName, Object fieldValue) {
         try {
             Field field = object.getClass().getDeclaredField(fieldName);

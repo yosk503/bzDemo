@@ -7,8 +7,8 @@ import java.util.ResourceBundle;
 
 /**
  * @version 1.0
- * @className:Application
- * @author:yanglonggui
+ * @className: Application
+ * @author: yanglonggui
  * @date: 2022/8/19
  */
 public class Application {

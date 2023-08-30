@@ -13,14 +13,13 @@ import java.util.List;
  */
 public class GetPMassId {
 
+    public static void main(String[] args) throws Exception {
+      GetPMassId.getPMassId("D:\\桌面\\需求\\补丁\\工具发版\\依赖检查.XLSX");
+    }
     /**
      * 投产整理前使用 获取要投产的excel路径
      * 然后获取补丁编号，再以分号分隔开，方便补丁下载
      */
-    public static void main(String[] args) throws Exception {
-      GetPMassId.getPMassId("D:\\桌面\\需求\\补丁\\工具发版\\依赖检查.XLSX");
-    }
-
     public static List<String> getPMassId(String fileName) throws Exception {
         FileInputStream inputStream=null;
         List<String> listReturn=new ArrayList<>();

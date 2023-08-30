@@ -32,6 +32,7 @@ public class PmPatchReg {
      * 附件
      */
     private String patchId;
+
     @Lob
     @Transient
     private byte[] fileBody;
@@ -56,6 +57,5 @@ public class PmPatchReg {
      * 05-待发版
      * 06-作废
      */
-
     private String stat;
 }

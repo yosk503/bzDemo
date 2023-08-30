@@ -22,7 +22,9 @@ import java.util.Objects;
 @Slf4j
 public class DownloadFile {
 
-
+    /**
+     * 实现附件下载以及备份的主方法
+     */
     public void downLoanPMassFile(List<PmPatchReg> entityList,String environment,String version,String excelSuffix) throws Exception {
         try{
             //校验文件所需要的数据是否为空

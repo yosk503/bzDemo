@@ -17,9 +17,7 @@ public class ExcelUtils {
     private final static String excel2007U =".xlsx";  //2007版本
 
     /**
-     * @Description： 获取IO流中的数据，组装成List<List<Object>>对象
-     * 该方法只针对excel文件列数 大于30列的数据，低于30列暂时不考虑，
-     * 需要将代码中大于30列才添加的代码注释掉，具体可通过版本记录进行查看
+     * 获取IO流中的数据，组装成List<List<Object>>对象
      */
     public static List<List<Object>> getListByExcel(InputStream in, String fileName) throws Exception{
         List<List<Object>> list;
@@ -59,7 +57,7 @@ public class ExcelUtils {
     }
 
     /**
-     * @Description： 根据文件后缀，自适应上传文件的版本
+     * 根据文件后缀，自适应上传文件的版本
      */
     public static  Workbook getWorkbook(InputStream inStr,String fileName) throws Exception{
         Workbook wb = null;
@@ -75,7 +73,7 @@ public class ExcelUtils {
     }
 
     /**
-     * @Description： 对表格中数值进行格式化
+     * 对表格中数值进行格式化
      */
     public static String getValue(Cell cell) {
         String value = "";

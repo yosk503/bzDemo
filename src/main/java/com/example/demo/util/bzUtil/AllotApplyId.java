@@ -369,6 +369,9 @@ public class AllotApplyId {
         return map;
     }
 
+    /**
+     * 测试生成数据
+     */
     public static Map<String, Map<String, List<String>>> getApplyId() {
         Map<String, Map<String, List<String>>> returnMap = new HashMap<>();
         // 客户1
@@ -394,6 +397,9 @@ public class AllotApplyId {
         return returnMap;
     }
 
+    /**
+     * 测试生成数据的公共方法
+     */
     private static Map<String, List<String>> createMapWithApplyIdList(String... applyIds) {
         Map<String, List<String>> map = new HashMap<>();
         List<String> applyIdList = new ArrayList<>();

@@ -1,25 +1,15 @@
 package com.example.demo.checkFb;
 
 
-import cn.hutool.core.io.CharsetDetector;
 import com.example.demo.util.commonUtil.Application;
 import com.example.demo.util.commonUtil.UnzipUtility;
 import com.example.demo.util.excelUtil.ExcelUtils;
 import com.example.demo.util.fbUtil.MakeTrash;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.compress.archivers.ArchiveEntry;
-import org.apache.commons.compress.archivers.ArchiveException;
-import org.apache.commons.compress.archivers.ArchiveInputStream;
-import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.apache.commons.compress.compressors.gzip.GzipCompressorInputStream;
-import org.codehaus.plexus.archiver.tar.TarEntry;
-import org.codehaus.plexus.archiver.tar.TarInputStream;
 
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -27,8 +17,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.toList;
 
 
 /**
@@ -277,6 +265,9 @@ public class FileSearch {
         return fileMap;
     }
 
+    /**
+     * 删除解压后的文件
+     */
     public static void deleteFiles(String directory) throws IOException {
         Path directoryPath = Paths.get(directory);
         if (!Files.exists(directoryPath)) {
@@ -303,9 +294,8 @@ public class FileSearch {
      * 遍历excel,获取map
      */
     public static Map<String, String> getExcelMap(String url) throws Exception {
-        String fileName = url;
-        FileInputStream inputStream = new FileInputStream(fileName);
-        List<List<Object>> list = ExcelUtils.getListByExcel(inputStream, fileName);
+        FileInputStream inputStream = new FileInputStream(url);
+        List<List<Object>> list = ExcelUtils.getListByExcel(inputStream, url);
         Map<String, String> map = new HashMap<>();
         for (int i = 1; i < list.size(); i++) {
             Object obj = list.get(i);
@@ -319,7 +309,6 @@ public class FileSearch {
         }
         return map;
     }
-
 
     /**
      * 获取tar包的名称

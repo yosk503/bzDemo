@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import javax.transaction.Transactional;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -29,6 +30,7 @@ class DemoApplicationTests {
     private PMassDao pMassDao;
 
     @Test
+    @Transactional
     public void downLoadFile() throws Exception {
         try {
             log.info("测试开始");
@@ -55,6 +57,9 @@ class DemoApplicationTests {
             //生成附件
             downloadFile.downLoanPMassFile(entityList, environment, version, excelSuffix);
             if ("product".equals(environment)) {
+                //校验是否能够发版
+                assert entityList != null;
+                FbUtil.checkState(entityList,environment);
                 //检查依赖
                 FileSearch.startCheckFile();
                 //发版准备结束以后把根目录下的excel删除，防止下次发版操作出错
@@ -62,7 +67,7 @@ class DemoApplicationTests {
                 boolean flag = excelFile.delete();
             }
             //默认暂时不更新，若要启用，请谨慎使用
-            //updateStat(environment,patchCodeList);
+            updateStat(environment,patchCodeList);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new Exception(e.getMessage());
@@ -76,31 +81,12 @@ class DemoApplicationTests {
      * product-已投产
      */
     public void updateStat(String flag, List<String> patchCode) throws Exception {
-        String stat = getMap(flag);
+        String stat = FbUtil.getMap(flag);
         //此处最好直接替换成自己pmass的id
         String username = System.getProperty("user.name");
         String date = new SimpleDateFormat("yyyyMMdd HHmmss").format(new Date());
         int num = pMassDao.updateStat(stat, username, date, patchCode);
         log.info("更新的数量一共为：" + num);
-    }
-
-    public String getMap(String name) throws Exception {
-        Map<String, String> map = new HashMap<>();
-        map.put("登记", "01");
-        map.put("已发测试环境", "02");
-        map.put("验证完毕", "03");
-        map.put("已投产", "04");
-        map.put("待发版", "05");
-        map.put("作废", "06");
-        if ("uat".equals(name)) {
-            return map.get("验证完毕");
-        } else if ("sit".equals(name)) {
-            return map.get("已发测试环境");
-        } else if ("product".equals(name)) {
-            return map.get("已投产");
-        } else {
-            throw new Exception("所传参数异常！");
-        }
     }
 
 
