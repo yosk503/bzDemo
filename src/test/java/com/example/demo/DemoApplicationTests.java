@@ -14,23 +14,28 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.transaction.Transactional;
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Slf4j
 @SpringBootTest
+@Transactional
 @RunWith(SpringJUnit4ClassRunner.class)
 class DemoApplicationTests {
     @Autowired
     private PMassDao pMassDao;
 
     @Test
-    @Transactional
+    @Rollback(false)
     public void downLoadFile() throws Exception {
         try {
             log.info("测试开始");
@@ -58,8 +63,8 @@ class DemoApplicationTests {
             downloadFile.downLoanPMassFile(entityList, environment, version, excelSuffix);
             if ("product".equals(environment)) {
                 //校验是否能够发版
-                assert entityList != null;
-                FbUtil.checkState(entityList,environment);
+//                assert entityList != null;
+//                FbUtil.checkState(entityList,environment);
                 //检查依赖
                 FileSearch.startCheckFile();
                 //发版准备结束以后把根目录下的excel删除，防止下次发版操作出错

@@ -14,7 +14,7 @@ import java.util.List;
 public class GetPMassId {
 
     public static void main(String[] args) throws Exception {
-      GetPMassId.getPMassId("D:\\桌面\\需求\\补丁\\工具发版\\依赖检查.XLSX");
+      GetPMassId.getPMassId("D:\\fb\\bzDemo\\20230824投产补丁.XLSX");
     }
     /**
      * 投产整理前使用 获取要投产的excel路径
@@ -35,7 +35,7 @@ public class GetPMassId {
                     listReturn.add((String) arrayList.get(2));
                 }
             }
-            //System.out.println(stringBuffer);
+            System.out.println(stringBuffer);
             return listReturn;
         }catch (Exception e){
             throw new RuntimeException(e.getMessage());

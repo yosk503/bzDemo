@@ -11,9 +11,10 @@ import static java.util.stream.Collectors.toList;
 
 public class FbUtil {
 
-    public static Map<String,String> map=new HashMap<>();
+    public static Map<String,String> map=new LinkedHashMap<>();
 
     static {
+        map.put("初始", "00");
         map.put("登记", "01");
         map.put("已发测试环境", "02");
         map.put("待发版", "05");
