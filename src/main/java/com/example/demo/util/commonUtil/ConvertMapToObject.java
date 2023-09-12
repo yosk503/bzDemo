@@ -29,7 +29,7 @@ public class ConvertMapToObject {
                 for (Map.Entry<String, Object> entry : map.entrySet()) {
                     String fieldName = entry.getKey();
                     Object fieldValue = entry.getValue();
-                    if (Proxy.isProxyClass(fieldValue.getClass())) {
+                    if (fieldValue!=null&&Proxy.isProxyClass(fieldValue.getClass())) {
                         InvocationHandler invocationHandler = Proxy.getInvocationHandler(fieldValue);
                         if (invocationHandler instanceof SerializableBlobProxy) {
                             SerializableBlobProxy serializableBlobProxy = (SerializableBlobProxy) invocationHandler;

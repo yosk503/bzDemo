@@ -72,7 +72,7 @@ class DemoApplicationTests {
                 boolean flag = excelFile.delete();
             }
             //默认暂时不更新，若要启用，请谨慎使用
-            updateStat(environment,patchCodeList);
+            //updateStat(environment,patchCodeList);
         } catch (Exception e) {
             log.error(e.getMessage());
             throw new Exception(e.getMessage());
