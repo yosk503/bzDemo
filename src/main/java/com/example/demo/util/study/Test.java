@@ -10,7 +10,7 @@ import java.nio.file.Paths;
 
 public class Test {
     public static void main(String[] args) throws Exception {
-        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get("D:\\fb\\test.txt")), StandardCharsets.UTF_8));
+        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(Files.newInputStream(Paths.get("D:\\fb\\bzHelp\\test.txt")), StandardCharsets.UTF_8));
         String line = bufferedReader.readLine();
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(replaceLine(line)).append("\n");

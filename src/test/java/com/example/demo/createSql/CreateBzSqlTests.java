@@ -156,7 +156,7 @@ public class CreateBzSqlTests {
      * 从Word文档中生成表
      */
     public void  createTable() throws Exception {
-        createTableSql("D:\\fb\\sql.txt");
+        createTableSql("D:\\fb\\bzHelp\\sql.txt");
     }
     /**
      * 生成字典

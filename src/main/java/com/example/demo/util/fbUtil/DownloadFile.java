@@ -71,7 +71,8 @@ public class DownloadFile {
                         fileOutputStream.close();
                         log.info(absoluteName+"   文件已成功生成!");
                     } catch (Exception e) {
-                        System.out.println(absoluteName+"   生成文件时出现错误：" + e.getMessage());
+                      log.info(absoluteName+"   生成文件时出现错误：" + e.getMessage());
+                      throw new Exception(e.getMessage());
                     }
                 }
 

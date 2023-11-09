@@ -83,7 +83,7 @@ class DemoApplicationTests {
         String stat = FbUtil.getMap(flag);
         //此处最好直接替换成自己pmass的id
         String username = System.getProperty("user.name");
-        String date = new SimpleDateFormat("yyyyMMdd HHmmss").format(new Date());
+        String date = new SimpleDateFormat("yyyyMMdd HH:mm:ss").format(new Date());
         int num = pMassDao.updateStat(stat, username, date, patchCode);
         log.info("更新的数量一共为：" + num);
     }

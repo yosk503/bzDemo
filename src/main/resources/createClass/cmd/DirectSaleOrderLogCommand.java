@@ -5,7 +5,7 @@ import org.loushang.next.web.cmd.BaseAjaxCommand;
 
 /**
 * @Author 系统自动生成
-* @Date 2023-11-08
+* @Date 2023-11-09
 */
 public class DirectSaleOrderLogCommand extends BaseAjaxCommand {
 

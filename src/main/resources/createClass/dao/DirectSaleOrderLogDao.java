@@ -4,7 +4,7 @@ import com.genersoft.cfs.common.dao.TsBaseJdbcDao;
 
 /**
 * @Author 系统自动生成
-* @Date 2023-11-08
+* @Date 2023-11-09
 */
 public class DirectSaleOrderLogDao extends TsBaseJdbcDao<DirectSaleOrderLog> {
 
