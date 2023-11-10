@@ -14,13 +14,13 @@ public class Test {
         String line = bufferedReader.readLine();
         StringBuffer stringBuffer = new StringBuffer();
         stringBuffer.append(replaceLine(line)).append("\n");
-        if (line.contains(".java")) {
+        if (line.contains(".class")) {
             stringBuffer.append(replaceLine(line).replace(".class", "$*")).append("\n");
         }
         while (line != null) {
             String lineNext = bufferedReader.readLine();
             stringBuffer.append(replaceLine(lineNext)).append("\n");
-            if (line.contains(".java")) {
+            if (line.contains(".class")) {
                 stringBuffer.append(replaceLine(lineNext).replace(".class", "$*")).append("\n");
             }
 
@@ -31,7 +31,7 @@ public class Test {
 
     public static String replaceLine(String line) {
         if (StringUtils.isNotEmpty(line)) {
-            return line.replaceAll(".java", ".class").replaceAll(":", "").replaceAll("\\d+", "").trim();
+            return line.replaceAll(".class", ".class").replaceAll(":", "").replaceAll("\\d+", "").trim();
         }
         return "";
     }

@@ -66,7 +66,12 @@ public class AopConfig {
             out.close();
         }
         assert attributes != null;
-        log.info("应答值 : " + object);
+        if(object instanceof ResponseData&&!"200".equals(((ResponseData) object).getCode())){
+            log.error("应答值 : " + object);
+        }else {
+            log.info("应答值 : " + object);
+        }
+
     }
 
     //抛出异常后通知（After throwing advice） ： 在方法抛出异常退出时执行的通知。
