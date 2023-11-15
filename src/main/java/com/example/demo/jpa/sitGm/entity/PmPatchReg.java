@@ -1,4 +1,4 @@
-package com.example.demo.pmass.entity;
+package com.example.demo.jpa.sitGm.entity;
 
 
 import lombok.Data;

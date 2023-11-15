@@ -1,6 +1,6 @@
-package com.example.demo.pmass.dao;
+package com.example.demo.jpa.pMass.dao;
 
-import com.example.demo.pmass.entity.PmAttachFiles;
+import com.example.demo.jpa.pMass.entity.PmAttachFiles;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

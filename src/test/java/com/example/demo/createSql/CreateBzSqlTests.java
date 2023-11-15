@@ -1,6 +1,7 @@
 package com.example.demo.createSql;
 
-import com.example.demo.pmass.dao.PMassDao;
+import com.example.demo.jpa.pMass.dao.PMassDao;
+import com.example.demo.jpa.sitGm.dao.SitGmDao;
 import com.example.demo.util.bzUtil.ExportTableHelp;
 import com.example.demo.util.commonUtil.Application;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +20,8 @@ import static com.example.demo.util.commonUtil.ConvertMapToObject.convertToCamel
 public class CreateBzSqlTests {
     @Autowired
     private PMassDao pMassDao;
+    @Autowired
+    private SitGmDao sitGmDao;
     Map<String,List<String>> mapList=new LinkedHashMap<>();
 
 
@@ -83,22 +86,22 @@ public class CreateBzSqlTests {
     public void exportTable(String tableName) throws Exception {
         tableName=tableName.trim().toUpperCase(Locale.ROOT);
         // 查询表结构
-        List<Object[]> createTableResult =pMassDao.queryTableStruct(tableName);
+        List<Object[]> createTableResult =sitGmDao.queryTableStruct(tableName);
         List<String> tableList=mapList.get("table")==null?new ArrayList<>():mapList.get("table");
         ExportTableHelp.createTable(createTableResult,tableName,tableList);
         mapList.put("table",tableList);
         // 查询主键
-        List<String> primaryKeys = pMassDao.queryPrimaryKey(tableName);
+        List<String> primaryKeys = sitGmDao.queryPrimaryKey(tableName);
         List<String> primaryList=mapList.get("primary")==null?new ArrayList<>():mapList.get("primary");
         String primaryKey=ExportTableHelp.createPrimaryKey(primaryKeys,tableName,primaryList);
         mapList.put("primary",primaryList);
         // 查询索引
-        List<Map<String,String>> indexesResult = pMassDao.queryIndex(tableName);
+        List<Map<String,String>> indexesResult = sitGmDao.queryIndex(tableName);
         List<String> indexList=mapList.get("index")==null?new ArrayList<>():mapList.get("index");
         ExportTableHelp.createIndex(indexesResult,primaryKey,tableName,indexList);
         mapList.put("index",indexList);
         // 查询注释
-        List<Object[]> comments = pMassDao.queryComment(tableName);
+        List<Object[]> comments = sitGmDao.queryComment(tableName);
         List<String> commentList=mapList.get("comment")==null?new ArrayList<>():mapList.get("comment");
         ExportTableHelp.createComment(comments,tableName,commentList);
         mapList.put("comment",commentList);
@@ -108,8 +111,8 @@ public class CreateBzSqlTests {
      */
     public void exportDictCode(String dictCode){
         List<String> sqlList=mapList.get("dictCode")==null?new ArrayList<>():mapList.get("dictCode");
-        ExportTableHelp.generateInsertSQL("PUB_DICT",pMassDao.queryPubDict(dictCode),sqlList);
-        ExportTableHelp.generateInsertSQL("PUB_DICT_ITEM",pMassDao.queryPubDictItem(dictCode),sqlList);
+        ExportTableHelp.generateInsertSQL("PUB_DICT",sitGmDao.queryPubDict(dictCode),sqlList);
+        ExportTableHelp.generateInsertSQL("PUB_DICT_ITEM",sitGmDao.queryPubDictItem(dictCode),sqlList);
         mapList.put("dictCode",sqlList);
     }
 
@@ -118,7 +121,7 @@ public class CreateBzSqlTests {
      * 根据中文名查询出对应的menuId
      */
     public void queryMenuId(String name){
-        List<Map<String,Object>> list=pMassDao.queryPubMenuIdLike("%"+name+"%");
+        List<Map<String,Object>> list=sitGmDao.queryPubMenuIdLike("%"+name+"%");
         if(list.size()==1){
             String menuId=(String) list.get(0).get("MENU_ID");
             exportMenu(menuId);
@@ -138,17 +141,17 @@ public class CreateBzSqlTests {
     public void exportMenu(String menuId){
         List<String> sqlList=mapList.get("menuTable")==null?new ArrayList<>():mapList.get("menuTable");
         //模型表
-        ExportTableHelp.generateInsertSQL("PUB_MODULES", pMassDao.queryPubModule(menuId),sqlList);
+        ExportTableHelp.generateInsertSQL("PUB_MODULES", sitGmDao.queryPubModule(menuId),sqlList);
         //功能表
-        ExportTableHelp.generateInsertSQL("PUB_FUNCTIONS", pMassDao.queryPubFunction(menuId),sqlList);
+        ExportTableHelp.generateInsertSQL("PUB_FUNCTIONS", sitGmDao.queryPubFunction(menuId),sqlList);
         //操作表
-        ExportTableHelp.generateInsertSQL("PUB_OPERATIONS", pMassDao.queryPubOperation(menuId),sqlList);
+        ExportTableHelp.generateInsertSQL("PUB_OPERATIONS", sitGmDao.queryPubOperation(menuId),sqlList);
         //url表
-        ExportTableHelp.generateInsertSQL("PUB_URLS", pMassDao.queryPubUrl(menuId),sqlList);
+        ExportTableHelp.generateInsertSQL("PUB_URLS", sitGmDao.queryPubUrl(menuId),sqlList);
         //节点表
-        ExportTableHelp.generateInsertSQL("PUB_MENU_ITEM", pMassDao.queryPubMenuItem(menuId),sqlList);
+        ExportTableHelp.generateInsertSQL("PUB_MENU_ITEM", sitGmDao.queryPubMenuItem(menuId),sqlList);
         //菜单表
-        ExportTableHelp.generateInsertSQL("PUB_MENU_STRU", pMassDao.queryPubMenuStar(menuId),sqlList);
+        ExportTableHelp.generateInsertSQL("PUB_MENU_STRU", sitGmDao.queryPubMenuStar(menuId),sqlList);
         //SQL输出
         mapList.put("menuTable",sqlList);
     }
@@ -157,7 +160,7 @@ public class CreateBzSqlTests {
      */
     public void exportIdTable(String id){
         List<String> sqlList=mapList.get("pubTable")==null?new ArrayList<>():mapList.get("pubTable");
-        ExportTableHelp.generateInsertSQL("PUB_IDTABLE",pMassDao.queryPubIdTable(id),sqlList);
+        ExportTableHelp.generateInsertSQL("PUB_IDTABLE",sitGmDao.queryPubIdTable(id),sqlList);
         mapList.put("pubTable",sqlList);
     }
     /**
@@ -165,7 +168,7 @@ public class CreateBzSqlTests {
      */
     public void exportLSSXXTS(String id){
         List<String> sqlList=mapList.get("lsxxts")==null?new ArrayList<>():mapList.get("lsxxts");
-        ExportTableHelp.generateInsertSQL("LSXXTS",pMassDao.queryLSXXTS(id),sqlList);
+        ExportTableHelp.generateInsertSQL("LSXXTS",sitGmDao.queryLSXXTS(id),sqlList);
         mapList.put("lsxxts",sqlList);
     }
 
@@ -198,9 +201,9 @@ public class CreateBzSqlTests {
         String path= Application.getProperty("create_class_dir");
         //生成实体类文件
         tableName=tableName.toUpperCase(Locale.ROOT);
-        List<Map<String,Object>> tableList=pMassDao.queryAllTable(tableName);
-        List<Map<String,Object>> commentList=pMassDao.queryAllComments(tableName);
-        List<String> primaryKeys = pMassDao.queryPrimaryKey(tableName);
+        List<Map<String,Object>> tableList=sitGmDao.queryAllTable(tableName);
+        List<Map<String,Object>> commentList=sitGmDao.queryAllComments(tableName);
+        List<String> primaryKeys = sitGmDao.queryPrimaryKey(tableName);
         String entityClassName=convertToCamelCase(tableName).substring(0,1).toUpperCase(Locale.ROOT)+convertToCamelCase(tableName).substring(1);
         //生成实体类文件
         StringBuilder entityStringBuilder=ExportTableHelp.createEntity(tableList,commentList,primaryKeys,tableName);

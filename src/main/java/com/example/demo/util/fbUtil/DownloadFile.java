@@ -1,7 +1,7 @@
 package com.example.demo.util.fbUtil;
 
 import com.example.demo.checkFb.FbUtil;
-import com.example.demo.pmass.entity.PmPatchReg;
+import com.example.demo.jpa.pMass.entity.PmPatchReg;
 import com.example.demo.util.commonUtil.Application;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;

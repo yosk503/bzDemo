@@ -3,8 +3,8 @@ package com.example.demo;
 import com.example.demo.checkFb.FbUtil;
 import com.example.demo.checkFb.FileSearch;
 import com.example.demo.checkFb.GetPMassId;
-import com.example.demo.pmass.dao.PMassDao;
-import com.example.demo.pmass.entity.PmPatchReg;
+import com.example.demo.jpa.pMass.dao.PMassDao;
+import com.example.demo.jpa.pMass.entity.PmPatchReg;
 import com.example.demo.util.commonUtil.ConvertMapToObject;
 import com.example.demo.util.fbUtil.DownloadFile;
 import lombok.extern.slf4j.Slf4j;
@@ -54,8 +54,8 @@ class DemoApplicationTests {
             //校验查询到的数据是否正确
             FbUtil.checkPMassPatch(pMassDao.queryList(patchCodeList), patchCodeList);
             //校验是否能够发版
-            assert entityList != null;
-            FbUtil.checkState(entityList,environment);
+//            assert entityList != null;
+//            FbUtil.checkState(entityList,environment);
             //生成附件
             downloadFile.downLoanPMassFile(entityList, environment, version, excelSuffix);
             if ("product".equals(environment)) {

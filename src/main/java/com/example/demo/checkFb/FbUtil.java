@@ -1,6 +1,6 @@
 package com.example.demo.checkFb;
 
-import com.example.demo.pmass.entity.PmPatchReg;
+import com.example.demo.jpa.pMass.entity.PmPatchReg;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.ObjectUtils;
 
