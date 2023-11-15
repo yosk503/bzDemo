@@ -1,7 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.alibaba.fastjson.JSON;
-import com.example.demo.config.ResponseData;
+import com.example.demo.config.responConfig.ResponseData;
 import com.example.demo.service.PostDemoService;
 import com.example.demo.util.commonUtil.ChangeObject;
 import com.example.demo.util.commonUtil.WyAndGmPost;

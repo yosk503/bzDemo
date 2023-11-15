@@ -1,8 +1,8 @@
 package com.example.demo.util.commonUtil;
 
 import com.alibaba.fastjson.JSON;
-import com.example.demo.config.ExceptionMsg;
-import com.example.demo.config.ResponseData;
+import com.example.demo.config.exceptionConfig.ExceptionMsg;
+import com.example.demo.config.responConfig.ResponseData;
 import net.sf.json.JSONSerializer;
 
 import java.io.*;

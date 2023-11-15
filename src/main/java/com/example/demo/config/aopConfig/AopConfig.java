@@ -1,8 +1,11 @@
-package com.example.demo.config;
+package com.example.demo.config.aopConfig;
 
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.config.responConfig.Response;
+import com.example.demo.config.responConfig.ResponseData;
+import com.example.demo.config.exceptionConfig.ExceptionMsg;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;

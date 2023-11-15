@@ -44,6 +44,12 @@ public interface PMassDao extends JpaRepository<PmPatchReg, Long> {
             " WHERE PR.PATCH_CODE IN (:patchCode)",nativeQuery = true)
     List<PmPatchReg> queryPatchCode(@Param("patchCode") List<String> patchCode);
 
+
+    @Query(value = "SELECT T.MENU_ID, T.PATH_NAME\n" +
+            "  FROM PUB_MENU_STRU T\n" +
+            " WHERE T.PATH_NAME LIKE :name"+
+            "   AND T.MENU_TYPE_ID = '1'",nativeQuery = true)
+    List<Map<String,Object>> queryPubMenuIdLike(@Param("name") String name);
     @Query(value = "SELECT T.* FROM PUB_MODULES T\n" +
             " WHERE T.MODULE_CODE IN\n" +
             "       (SELECT B.MODULE_CODE\n" +

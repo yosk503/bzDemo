@@ -1,5 +1,6 @@
-package com.example.demo.config;
+package com.example.demo.config.exceptionConfig;
 
+import com.example.demo.config.responConfig.Response;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;

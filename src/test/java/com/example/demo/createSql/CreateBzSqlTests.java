@@ -3,14 +3,13 @@ package com.example.demo.createSql;
 import com.example.demo.pmass.dao.PMassDao;
 import com.example.demo.util.bzUtil.ExportTableHelp;
 import com.example.demo.util.commonUtil.Application;
-import com.example.demo.util.commonUtil.DeleteLogFile;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import java.io.File;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.example.demo.util.bzUtil.ExportTableHelp.createDictSql;
 import static com.example.demo.util.bzUtil.ExportTableHelp.createTableSql;
@@ -48,12 +47,13 @@ public class CreateBzSqlTests {
 //        exportTable("DEV_LOAN_ITEMS_DETAIL");
 //        exportTable("DEV_GRANT_APPLY");
 //        exportTable("DEV_LOAN_REPAY_PLAN");
+        queryMenuId("汽车金融日报报表");
 //        exportMenu("000000000000000000000000004189");
         //直营数据映射
 //        exportMenu("000000000000000000000000004284");
         //首先删除该文件夹下的所有文件
-        DeleteLogFile.findFileList(new File(Application.getProperty("create_class_dir")), new ArrayList<>(),new HashMap<>());
-        createEntityClass("DIRECT_SALE_ORDER_LOG");
+//        DeleteLogFile.findFileList(new File(Application.getProperty("create_class_dir")), new ArrayList<>(),new HashMap<>());
+//        createEntityClass("DIRECT_SALE_ORDER_LOG");
 //        createEntityClass("DIRECT_SALE_MODEL_CONFIG");
 //        createEntityClass("DIRECT_SALE_DEALER_CONFIG");
         mapList.values().stream().flatMap(List::stream).forEach(System.out::println);
@@ -111,6 +111,24 @@ public class CreateBzSqlTests {
         ExportTableHelp.generateInsertSQL("PUB_DICT",pMassDao.queryPubDict(dictCode),sqlList);
         ExportTableHelp.generateInsertSQL("PUB_DICT_ITEM",pMassDao.queryPubDictItem(dictCode),sqlList);
         mapList.put("dictCode",sqlList);
+    }
+
+
+    /**
+     * 根据中文名查询出对应的menuId
+     */
+    public void queryMenuId(String name){
+        List<Map<String,Object>> list=pMassDao.queryPubMenuIdLike("%"+name+"%");
+        if(list.size()==1){
+            String menuId=(String) list.get(0).get("MENU_ID");
+            exportMenu(menuId);
+        }else {
+            List<String> convertedList = list.stream()
+                    .map(map->map.get("MENU_ID")+","+map.get("PATH_NAME")) // 将每个 Map 转换为 JSON 字符串
+                    .collect(Collectors.toList()); // 将转换后的字符串收集到新的 List 中
+            mapList.put("menuId",convertedList);
+        }
+
     }
     /**
      * 导出某个目录下的所有菜单

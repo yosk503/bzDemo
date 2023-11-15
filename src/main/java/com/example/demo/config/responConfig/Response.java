@@ -1,4 +1,6 @@
-package com.example.demo.config;
+package com.example.demo.config.responConfig;
+
+import com.example.demo.config.exceptionConfig.ExceptionMsg;
 
 public class Response {
     private String msg="成功！";

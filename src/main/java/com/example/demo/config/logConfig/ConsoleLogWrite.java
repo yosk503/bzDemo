@@ -1,4 +1,4 @@
-package com.example.demo.config;
+package com.example.demo.config.logConfig;
 
 
 import com.example.demo.util.commonUtil.Application;

@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.config.ResponseData;
+import com.example.demo.config.responConfig.ResponseData;
 import com.example.demo.service.PostDemoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;

@@ -1,13 +1,14 @@
-package com.example.demo.config;
+package com.example.demo.config.responConfig;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.demo.config.exceptionConfig.ExceptionMsg;
 import org.apache.commons.lang3.StringUtils;
 
 public class ResponseData extends Response{
     private Object data;
 
-    public ResponseData(ExceptionMsg msg,Object data){
+    public ResponseData(ExceptionMsg msg, Object data){
         super(msg);
         try{
             if(data instanceof String&&StringUtils.isEmpty((String) data)){
